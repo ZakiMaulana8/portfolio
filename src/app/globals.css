@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
+@theme {
+  --font-caveat: "Caveat", cursive;
+  --font-outfit: "Outfit", sans-serif;
+  
+  --color-amber-50: #fffbeb;
+  --color-amber-100: #fef3c7;
+  --color-amber-200: #fde68a;
+  --color-amber-300: #fcd34d;
+  --color-amber-400: #fbbf24;
+  --color-amber-900: #78350f;
+  --color-amber-950: #451a03;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bg: #fffbeb;
+  --text: #451a03;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-caveat);
+  overflow-x: hidden;
+}
+
+.bg-pattern {
+  background-image: radial-gradient(circle at 2px 2px, #d97706 2px, transparent 0);
+  background-size: 40px 40px;
+}
+
+.tape {
+  clip-path: polygon(2% 0, 98% 2%, 100% 50%, 96% 98%, 4% 100%, 0 50%);
+}
+
+.sepia-filter {
+  filter: sepia(0.3) contrast(1.1) brightness(0.95);
+}
+
+.highlight {
+  background: linear-gradient(120deg, #fbbf24 0%, #fbbf24 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 0.3em;
+  background-position: 0 88%;
+  padding: 0 0.1em;
+}
+
+/* Custom transitions and scroll effects */
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
