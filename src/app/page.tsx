@@ -13,7 +13,9 @@ import {
   Share2,
   Code,
   Zap,
-  Layers
+  Layers,
+  MessageCircle,
+  Briefcase
 } from "lucide-react";
 
 
@@ -110,6 +112,67 @@ const ToolSticker = ({ label, icon: Icon, delay = 0, color = "bg-white" }: { lab
   </motion.div>
 );
 
+const TestimonialNote = ({ text, author, rotation = 0, color = "bg-amber-100" }: { text: string, author: string, rotation?: number, color?: string }) => (
+  <motion.div
+    drag
+    dragConstraints={{ left: -10, right: 10, top: -10, bottom: 10 }}
+    whileHover={{ scale: 1.05, rotate: 0, zIndex: 10 }}
+    initial={{ rotate: rotation, opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    className={cn(
+      "p-6 border-2 border-amber-900 shadow-[4px_4px_0px_theme(colors.amber.900)] relative max-w-[280px] cursor-grab active:cursor-grabbing",
+      color
+    )}
+  >
+    <div className="flex justify-between items-start mb-4">
+      <MessageCircle size={20} className="opacity-30" />
+      <div className="w-3 h-3 rounded-full bg-amber-900/10" />
+    </div>
+    <p className="text-2xl font-caveat italic leading-tight mb-6">"{text}"</p>
+    <div className="border-t border-amber-900/20 pt-2 text-right">
+      <p className="text-xl font-bold font-caveat">- {author}</p>
+    </div>
+    <Tape className="-top-3 left-1/3 w-20 rotate-12 opacity-80" />
+  </motion.div>
+);
+
+const TimelineItem = ({ year, title, company, desc, side = "left" }: { year: string, title: string, company: string, desc: string, side?: "left" | "right" }) => (
+  <div className={cn(
+    "flex w-full mb-16 items-center justify-between",
+    side === "right" ? "flex-row-reverse" : "flex-row"
+  )}>
+    <div className="hidden md:block w-5/12" />
+    <div className="z-20 flex items-center order-1 bg-amber-400 border-4 border-amber-900 shadow-[4px_4px_0px_theme(colors.amber.900)] w-14 h-14 rounded-full relative group hover:scale-110 transition-transform">
+      <h1 className="mx-auto font-bold text-xl uppercase">{year}</h1>
+      <div className="absolute -top-1 -right-1 group-hover:block hidden">
+        <Sparkles size={14} className="text-amber-900" />
+      </div>
+    </div>
+    <motion.div 
+      initial={{ x: side === "left" ? -50 : 50, opacity: 0 }}
+      whileInView={{ x: 0, opacity: 1 }}
+      viewport={{ once: true }}
+      className={cn(
+        "order-1 bg-white p-6 border-2 border-amber-900 shadow-[8px_8px_0px_theme(colors.amber.400)] w-full md:w-5/12 relative group",
+        side === "right" ? "rotate-1" : "-rotate-1"
+      )}
+    >
+      <h3 className="mb-1 font-bold text-amber-950 text-2xl md:text-3xl uppercase leading-none">{title}</h3>
+      <h4 className="mb-4 font-bold text-amber-600 text-xl italic">{company}</h4>
+      <p className="text-2xl leading-tight opacity-90">{desc}</p>
+      <Tape className={cn("-top-4 w-28", side === "left" ? "-right-6 rotate-12" : "-left-6 -rotate-12")} />
+      
+      <div className={cn(
+        "absolute top-1/2 -translate-y-1/2 hidden md:block",
+        side === "right" ? "-right-8" : "-left-8"
+      )}>
+        <PenTool className="opacity-10 group-hover:opacity-100 transition-opacity" size={24} />
+      </div>
+    </motion.div>
+  </div>
+);
+
 export default function Portfolio() {
   const [currentAboutImg, setCurrentAboutImg] = useState(0);
   const aboutImages = [
@@ -140,7 +203,9 @@ export default function Portfolio() {
         >
           <a href="#about" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">About</a>
           <a href="#projects" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Work</a>
+          <a href="#journey" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Journey</a>
           <a href="#tools" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Tools</a>
+          <a href="#testimonials" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Words</a>
           <a href="#contact" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Say Hi</a>
         </motion.div>
       </nav>
@@ -278,6 +343,47 @@ export default function Portfolio() {
           </div>
         </section>
 
+        {/* JOURNEY SECTION */}
+        <section id="journey" className="py-24 px-6 md:px-20 relative bg-amber-50/50">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-center gap-6 mb-24">
+              <Briefcase size={60} className="text-amber-900" />
+              <h2 className="text-6xl md:text-8xl font-bold uppercase underline decoration-amber-400 decoration-wavy underline-offset-12">The Journey</h2>
+            </div>
+            
+            <div className="relative wrap overflow-hidden p-0 md:p-10 h-full">
+              {/* Timeline center line */}
+              <div className="absolute border-opacity-20 border-amber-900 h-full border-4 left-1/2 -translate-x-1/2 hidden md:block border-dashed" />
+              
+              <TimelineItem 
+                year="2024" 
+                title="Lead Creative" 
+                company="Magic Studio" 
+                desc="Building messy-yet-functional interactive experiences for high-end clients." 
+                side="left"
+              />
+              <TimelineItem 
+                year="2022" 
+                title="Frontend Artist" 
+                company="Dream Lab" 
+                desc="Crafting pixels into smooth, soul-filled applications using modern web tech." 
+                side="right"
+              />
+              <TimelineItem 
+                year="2020" 
+                title="Visual Designer" 
+                company="Paper Pixels" 
+                desc="Where it all began. Learning the art of balancing chaos and order in design." 
+                side="left"
+              />
+            </div>
+          </div>
+          
+          <div className="absolute top-1/4 right-0 opacity-10 -rotate-12 pointer-events-none">
+            <CuteFlower className="w-[300px] h-[300px]" rotationBase={-10} />
+          </div>
+        </section>
+
         {/* TOOLS SECTION */}
         <section id="tools" className="py-24 px-6 md:px-20 relative overflow-hidden">
           <div className="max-w-6xl mx-auto">
@@ -311,6 +417,51 @@ export default function Portfolio() {
             <div className="absolute top-1/2 left-0 -translate-y-1/2 opacity-5 pointer-events-none">
               <CuteFlower className="w-[500px] h-[500px]" rotationBase={20} />
             </div>
+          </div>
+        </section>
+
+        {/* TESTIMONIALS SECTION */}
+        <section id="testimonials" className="py-24 px-6 md:px-20 relative overflow-hidden bg-amber-50/30">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16 relative">
+              <h2 className="text-6xl md:text-8xl font-bold inline-block relative">
+                Wall of Love
+                <div className="absolute -bottom-4 left-0 w-full h-2 bg-amber-400 -rotate-1 z-[-1]" />
+              </h2>
+              <p className="text-2xl mt-4 italic opacity-70">Some scattered notes from lovely people.</p>
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-8 md:gap-12">
+              <TestimonialNote 
+                text="The messiest code I've ever seen, but it works like magic! Truly a creative wizard." 
+                author="Sarah J. (Startup Founder)"
+                rotation={-3}
+                color="bg-amber-200"
+              />
+              <TestimonialNote 
+                text="They really know how to make things feel human. Best aesthetic vibes I've ever seen in a dev." 
+                author="Alex Chen (Design Lead)"
+                rotation={4}
+                color="bg-white"
+              />
+              <TestimonialNote 
+                text="I love the scrapbook aesthetic. It's so refreshing to see something besides generic SaaS vibes." 
+                author="Mika (Fellow Artist)"
+                rotation={-2}
+                color="bg-amber-300"
+              />
+               <TestimonialNote 
+                text="Fast, reliable, and definitely a bit weird (in a good way). Would definitely collab again!" 
+                author="David W. (Producer)"
+                rotation={5}
+                color="bg-amber-100"
+              />
+            </div>
+          </div>
+          
+          {/* Decorative bits */}
+          <div className="absolute -bottom-10 -right-10 opacity-10 rotate-45">
+            <PenTool size={200} />
           </div>
         </section>
 
