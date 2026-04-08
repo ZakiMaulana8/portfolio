@@ -173,6 +173,48 @@ const TimelineItem = ({ year, title, company, desc, side = "left" }: { year: str
   </div>
 );
 
+const ProcessCard = ({ number, title, desc, icon: Icon, rotation = 0 }: { number: string, title: string, desc: string, icon: any, rotation?: number }) => (
+  <motion.div
+    initial={{ scale: 0.8, opacity: 0 }}
+    whileInView={{ scale: 1, opacity: 1 }}
+    viewport={{ once: true }}
+    whileHover={{ y: -10, rotate: rotation + 2 }}
+    className={cn(
+      "bg-white p-8 border-2 border-amber-900 shadow-[10px_10px_0px_theme(colors.amber.900)] relative min-w-[260px] flex-1",
+      rotation > 0 ? "rotate-2" : "-rotate-2"
+    )}
+  >
+    <div className="absolute -top-6 -left-6 w-12 h-12 bg-amber-400 border-2 border-amber-900 flex items-center justify-center font-bold text-2xl rotate-[-12deg]">
+      {number}
+    </div>
+    <div className="mb-4 text-amber-600">
+      <Icon size={40} strokeWidth={1.5} />
+    </div>
+    <h3 className="text-3xl font-bold uppercase mb-2">{title}</h3>
+    <p className="text-2xl leading-tight opacity-80">{desc}</p>
+    <Tape className="-top-3 right-4 w-20 rotate-[-8deg] opacity-50" />
+  </motion.div>
+);
+
+const FAQItem = ({ question, answer, rotation = 0 }: { question: string, answer: string, rotation?: number }) => (
+  <motion.div 
+    initial={{ x: -20, opacity: 0 }}
+    whileInView={{ x: 0, opacity: 1 }}
+    viewport={{ once: true }}
+    className={cn(
+      "p-6 bg-white border-2 border-amber-900 shadow-[6px_6px_0px_theme(colors.amber.900)] mb-6 last:mb-0",
+      rotation > 0 ? "rotate-1" : "-rotate-1"
+    )}
+  >
+    <h4 className="text-2xl font-bold uppercase mb-2 flex items-center gap-2">
+      <Sparkles size={18} className="text-amber-400" /> {question}
+    </h4>
+    <p className="text-2xl leading-tight opacity-90 italic">"{answer}"</p>
+  </motion.div>
+);
+
+
+
 export default function Portfolio() {
   const [currentAboutImg, setCurrentAboutImg] = useState(0);
   const aboutImages = [
@@ -204,6 +246,7 @@ export default function Portfolio() {
           <a href="#about" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">About</a>
           <a href="#projects" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Work</a>
           <a href="#journey" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Journey</a>
+          <a href="#process" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Process</a>
           <a href="#tools" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Tools</a>
           <a href="#testimonials" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Words</a>
           <a href="#contact" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Say Hi</a>
@@ -384,6 +427,66 @@ export default function Portfolio() {
           </div>
         </section>
 
+        {/* PROCESS SECTION */}
+        <section id="process" className="py-24 px-6 md:px-20 bg-amber-400/10">
+          <div className="max-w-7xl mx-auto">
+             <div className="text-center mb-24">
+                <h2 className="text-6xl md:text-8xl font-bold uppercase inline-block relative rotate-1">
+                  How the Magic Happens
+                  <div className="absolute -bottom-2 -left-1 w-[110%] h-4 bg-amber-300/60 -z-10 -rotate-1" />
+                </h2>
+                <p className="text-3xl mt-4 max-w-2xl mx-auto italic">Step-by-step into the creative chaos.</p>
+             </div>
+
+             <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 items-stretch pt-10">
+                <ProcessCard 
+                  number="01" 
+                  title="Ideation" 
+                  desc="Lots of tea, napkins, and messy scribbles on various notebooks." 
+                  icon={Briefcase}
+                  rotation={-2}
+                />
+                <div className="hidden lg:flex items-center text-amber-400">
+                  <motion.div animate={{ x: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+                    <Sparkles size={32} />
+                  </motion.div>
+                </div>
+                <ProcessCard 
+                  number="02" 
+                  title="Sketching" 
+                  desc="Turning fuzzy concepts into actual layout and user flows." 
+                  icon={PenTool}
+                  rotation={2}
+                />
+                <div className="hidden lg:flex items-center text-amber-400">
+                  <motion.div animate={{ x: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.5 }}>
+                    <Sparkles size={32} />
+                  </motion.div>
+                </div>
+                <ProcessCard 
+                  number="03" 
+                  title="Crafting" 
+                  desc="High-energy coding session where pixels finally start to dance." 
+                  icon={Code}
+                  rotation={-1}
+                />
+                <div className="hidden lg:flex items-center text-amber-400">
+                  <motion.div animate={{ x: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 1 }}>
+                    <Sparkles size={32} />
+                  </motion.div>
+                </div>
+                <ProcessCard 
+                  number="04" 
+                  title="Publish" 
+                  desc="Adding the soul, the polish, and shipping it into the wild." 
+                  icon={Zap}
+                  rotation={3}
+                />
+             </div>
+          </div>
+        </section>
+
+
         {/* TOOLS SECTION */}
         <section id="tools" className="py-24 px-6 md:px-20 relative overflow-hidden">
           <div className="max-w-6xl mx-auto">
@@ -459,11 +562,44 @@ export default function Portfolio() {
             </div>
           </div>
           
-          {/* Decorative bits */}
           <div className="absolute -bottom-10 -right-10 opacity-10 rotate-45">
             <PenTool size={200} />
           </div>
         </section>
+
+        {/* FAQ SECTION */}
+        <section id="faq" className="py-24 px-6 md:px-20 relative">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-amber-900 text-amber-50 p-6 md:p-10 border-4 border-amber-900 shadow-[10px_10px_0px_theme(colors.amber.400)] mb-16 -rotate-1">
+              <h2 className="text-5xl md:text-7xl font-bold uppercase">Random Questions</h2>
+              <p className="text-2xl opacity-80">Things people usually ask (or I think they should).</p>
+            </div>
+            
+            <div className="space-y-8">
+              <FAQItem 
+                question="Do you work remotely?" 
+                answer="Yes! As long as there's Wi-Fi and a steady supply of caffeine, I'm good to go." 
+                rotation={-1}
+              />
+              <FAQItem 
+                question="What's with the messy style?" 
+                answer="I believe perfection is boring. Humans are messy, so digital experiences should feel human too." 
+                rotation={1}
+              />
+              <FAQItem 
+                question="Available for freelance?" 
+                answer="My schedule is often a bit chaotic, but I'm always open to hearing about cool, creative projects." 
+                rotation={-0.5}
+              />
+            </div>
+          </div>
+          
+          {/* Decorative Flowers */}
+          <div className="absolute top-0 left-0 opacity-10 -translate-x-1/2 rotate-12">
+            <CuteFlower className="w-[400px] h-[400px]" />
+          </div>
+        </section>
+
 
         {/* CONTACT SECTION */}
         <section id="contact" className="min-h-screen py-24 px-6 flex items-center justify-center overflow-hidden">
