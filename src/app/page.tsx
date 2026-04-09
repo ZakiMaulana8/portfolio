@@ -112,6 +112,40 @@ const ToolSticker = ({ label, icon: Icon, delay = 0, color = "bg-white" }: { lab
   </motion.div>
 );
 
+const Polaroid = ({ img, caption, rotation = 0 }: { img: string, caption: string, rotation?: number }) => (
+  <motion.div
+    whileHover={{ scale: 1.05, rotate: 0, zIndex: 10 }}
+    initial={{ opacity: 0, scale: 0.9 }}
+    whileInView={{ opacity: 1, scale: 1 }}
+    viewport={{ once: true }}
+    className={cn(
+      "bg-white p-4 pb-12 border-2 border-amber-900 shadow-[8px_8px_0px_rgba(120,53,15,0.1)] transition-all break-inside-avoid",
+      rotation > 0 ? "rotate-2" : "-rotate-2"
+    )}
+  >
+    <div className="aspect-square bg-amber-50 border border-amber-900 overflow-hidden mb-4">
+      <img src={img} alt={caption} className="w-full h-full object-cover sepia-filter hover:sepia-0 transition-all duration-500" />
+    </div>
+    <p className="text-2xl font-caveat text-center font-bold leading-none">{caption}</p>
+    <Tape className="-top-3 left-1/2 -translate-x-1/2 w-20 rotate-1 opacity-60" />
+  </motion.div>
+);
+
+const TrackItem = ({ title, artist, time }: { title: string, artist: string, time: string }) => (
+  <div className="flex items-center justify-between py-4 border-b border-amber-900/10 group cursor-pointer hover:bg-amber-100/50 px-2 transition-colors">
+    <div className="flex items-center gap-4">
+      <div className="w-10 h-10 bg-amber-200 border border-amber-900 flex items-center justify-center text-amber-900 font-bold group-hover:bg-amber-400 transition-colors">
+        <Zap size={16} className="group-hover:animate-bounce" />
+      </div>
+      <div>
+        <h4 className="text-2xl font-bold leading-none">{title}</h4>
+        <p className="text-xl opacity-60 leading-none">{artist}</p>
+      </div>
+    </div>
+    <span className="text-xl italic opacity-40">{time}</span>
+  </div>
+);
+
 const TestimonialNote = ({ text, author, rotation = 0, color = "bg-amber-100" }: { text: string, author: string, rotation?: number, color?: string }) => (
   <motion.div
     drag
@@ -248,6 +282,8 @@ export default function Portfolio() {
           <a href="#journey" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Journey</a>
           <a href="#process" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Process</a>
           <a href="#tools" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Tools</a>
+          <a href="#bits" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Bits</a>
+          <a href="#vibe" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Vibe</a>
           <a href="#testimonials" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Words</a>
           <a href="#contact" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Say Hi</a>
         </motion.div>
@@ -519,6 +555,67 @@ export default function Portfolio() {
             {/* Background Doodles */}
             <div className="absolute top-1/2 left-0 -translate-y-1/2 opacity-5 pointer-events-none">
               <CuteFlower className="w-[500px] h-[500px]" rotationBase={20} />
+            </div>
+          </div>
+        </section>
+
+        {/* SCRAPBOOK SECTION */}
+        <section id="bits" className="py-24 px-6 md:px-20 bg-amber-400/5">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
+              <div className="relative">
+                <h2 className="text-6xl md:text-8xl font-bold uppercase">The Scrapbook</h2>
+                <p className="text-3xl italic opacity-70 mt-2">Daily bits and digital snapshots.</p>
+                <div className="absolute -top-10 -right-20 opacity-10 rotate-12 hidden lg:block">
+                  <Camera size={100} />
+                </div>
+              </div>
+              <div className="bg-amber-900 text-white px-6 py-2 border-2 border-amber-900 rotate-2 shadow-[4px_4px_0px_rgba(120,53,15,0.3)]">
+                <span className="text-2xl font-bold uppercase italic">Volume 01.</span>
+              </div>
+            </div>
+
+            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
+              <Polaroid img="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600" caption="Vintage Cameras" rotation={-3} />
+              <Polaroid img="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600" caption="Late Night Sketches" rotation={4} />
+              <Polaroid img="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=600" caption="Organized Chaos" rotation={-2} />
+              <Polaroid img="https://images.unsplash.com/photo-1493723843671-1d655e7d98f0?q=80&w=600" caption="Morning Tea" rotation={5} />
+              <Polaroid img="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=600" caption="The Setup" rotation={-4} />
+              <Polaroid img="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=600" caption="Abstract Layers" rotation={3} />
+            </div>
+          </div>
+        </section>
+
+        {/* VIBE SECTION */}
+        <section id="vibe" className="py-24 px-6 md:px-20 bg-white/30">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 items-center">
+            <div className="flex-1 w-full text-center lg:text-left">
+              <div className="inline-block bg-amber-400 p-6 border-4 border-amber-900 shadow-[10px_10px_0px_theme(colors.amber.900)] -rotate-3 mb-12">
+                <h2 className="text-5xl md:text-8xl font-bold uppercase leading-none">The Vibe Box</h2>
+              </div>
+              <p className="text-3xl md:text-4xl italic max-w-xl mx-auto lg:mx-0 leading-tight mb-8">
+                Every line of code is written to the rhythm of these tracks. The soundtrack of my messy process.
+              </p>
+              <div className="flex justify-center lg:justify-start">
+                 <CuteFlower className="w-32 h-32" rotationBase={45} />
+              </div>
+            </div>
+            
+            <div className="w-full lg:w-[500px]">
+              <div className="bg-white p-6 md:p-10 border-2 border-amber-900 shadow-[12px_12px_0px_theme(colors.amber.400)] relative rotate-1">
+                <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-amber-900/10">
+                  <h3 className="text-3xl font-bold uppercase">Playlist</h3>
+                  <Zap className="text-amber-400 animate-pulse" />
+                </div>
+                <div className="space-y-2">
+                  <TrackItem title="Digital Garden" artist="Echo Lake" time="3:45" />
+                  <TrackItem title="Blurry Pixels" artist="The Framers" time="4:20" />
+                  <TrackItem title="Amber Glow" artist="Caveat" time="2:15" />
+                  <TrackItem title="Scrapbook Morning" artist="Journal" time="5:10" />
+                  <TrackItem title="Static Noise" artist="Creative Bits" time="2:58" />
+                </div>
+                <Tape className="-bottom-3 left-10 w-28 rotate-[8deg] z-20" />
+              </div>
             </div>
           </div>
         </section>
