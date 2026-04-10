@@ -15,7 +15,9 @@ import {
   Zap,
   Layers,
   MessageCircle,
-  Briefcase
+  Briefcase,
+  Rocket,
+  Coffee
 } from "lucide-react";
 
 
@@ -247,6 +249,28 @@ const FAQItem = ({ question, answer, rotation = 0 }: { question: string, answer:
   </motion.div>
 );
 
+const ServiceCard = ({ icon: Icon, title, desc, price, rotation = 0 }: { icon: any, title: string, desc: string, price: string, rotation?: number }) => (
+  <motion.div
+    whileHover={{ y: -5, rotate: 0 }}
+    className={cn(
+      "bg-white p-8 border-2 border-amber-900 shadow-[8px_8px_0px_theme(colors.amber.900)] relative flex flex-col items-center text-center group transition-all",
+      rotation > 0 ? "rotate-1" : "-rotate-1"
+    )}
+  >
+    <div className="w-16 h-16 bg-amber-400 border-2 border-amber-900 flex items-center justify-center mb-6 -rotate-3 group-hover:rotate-0 transition-transform">
+      <Icon size={32} />
+    </div>
+    <h3 className="text-3xl font-bold uppercase mb-4">{title}</h3>
+    <p className="text-xl opacity-80 mb-6 font-caveat leading-tight">{desc}</p>
+    <div className="mt-auto pt-4 border-t-2 border-dashed border-amber-900/20 w-full flex items-center justify-center gap-2">
+      <Sparkles size={14} className="text-amber-400" />
+      <span className="text-2xl font-bold italic text-amber-800">{price}</span>
+      <Sparkles size={14} className="text-amber-400" />
+    </div>
+    <Tape className="-top-3 -right-2 w-20 rotate-12 opacity-40" />
+  </motion.div>
+);
+
 
 
 export default function Portfolio() {
@@ -281,6 +305,7 @@ export default function Portfolio() {
           <a href="#projects" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Work</a>
           <a href="#journey" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Journey</a>
           <a href="#process" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Process</a>
+          <a href="#services" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Offer</a>
           <a href="#tools" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Tools</a>
           <a href="#bits" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Bits</a>
           <a href="#vibe" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Vibe</a>
@@ -519,6 +544,48 @@ export default function Portfolio() {
                   rotation={3}
                 />
              </div>
+          </div>
+        </section>
+
+        {/* SERVICES SECTION */}
+        <section id="services" className="py-24 px-6 md:px-20 bg-amber-100/50 relative">
+          <div className="max-w-7xl mx-auto">
+             <div className="text-center mb-24">
+                <h2 className="text-6xl md:text-8xl font-bold uppercase inline-block relative -rotate-1">
+                  How I Can Help
+                  <div className="absolute -bottom-2 -right-1 w-[110%] h-4 bg-amber-300/60 -z-10 rotate-1" />
+                </h2>
+                <p className="text-3xl mt-4 max-w-2xl mx-auto italic">Crafting digital experiences with a soul.</p>
+             </div>
+
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                <ServiceCard 
+                  icon={PenTool} 
+                  title="UI/UX Design" 
+                  desc="Creating messy-yet-usable interfaces that stand out from the crowd and feel human." 
+                  price="Starting with coffee"
+                  rotation={-2}
+                />
+                <ServiceCard 
+                  icon={Rocket} 
+                  title="Web Development" 
+                  desc="Turning static designs into living, breathing web applications with modern tech." 
+                  price="Let's build something"
+                  rotation={1}
+                />
+                <ServiceCard 
+                  icon={Coffee} 
+                  title="Consultation" 
+                  desc="Need a fresh pair of eyes on your project? I'm here for creative brainstorming." 
+                  price="1-on-1 Vibes"
+                  rotation={-1}
+                />
+             </div>
+          </div>
+          
+          {/* Decorative Doodle */}
+          <div className="absolute bottom-10 right-10 opacity-5 -rotate-45 pointer-events-none">
+            <Zap size={200} />
           </div>
         </section>
 
