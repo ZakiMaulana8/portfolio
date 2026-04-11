@@ -32,35 +32,35 @@ function cn(...inputs: ClassValue[]) {
 const CuteFlower = ({ className, rotationBase = 0, delay = 0 }: { className?: string, rotationBase?: number, delay?: number }) => (
   <motion.svg 
     animate={{ 
-      rotate: [rotationBase - 8, rotationBase + 8, rotationBase - 8],
-      scale: [1, 1.05, 1] 
+      rotate: [rotationBase - 12, rotationBase + 12, rotationBase - 12],
+      scale: [1, 1.1, 1] 
     }}
-    transition={{ duration: 4 + Math.random() * 2, delay, repeat: Infinity, ease: "easeInOut" }}
-    className={cn("drop-shadow-sm pointer-events-none", className)} 
+    transition={{ duration: 6, delay, repeat: Infinity, ease: "easeInOut" }}
+    className={cn("drop-shadow-xl pointer-events-none filter sepia-[0.1]", className)} 
     viewBox="0 0 100 100" 
     fill="none" 
   >
-    {/* Kelopak Bunga (30% Warna - Amber 300) */}
-    <circle cx="50" cy="20" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2.5" />
-    <circle cx="80" cy="50" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2.5" />
-    <circle cx="50" cy="80" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2.5" />
-    <circle cx="20" cy="50" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2.5" />
-    <circle cx="28" cy="28" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2.5" />
-    <circle cx="72" cy="28" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2.5" />
-    <circle cx="72" cy="72" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2.5" />
-    <circle cx="28" cy="72" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2.5" />
+    <circle cx="50" cy="20" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2" />
+    <circle cx="80" cy="50" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2" />
+    <circle cx="50" cy="80" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2" />
+    <circle cx="20" cy="50" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2" />
+    <circle cx="28" cy="28" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2" />
+    <circle cx="72" cy="28" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2" />
+    <circle cx="72" cy="72" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2" />
+    <circle cx="28" cy="72" r="20" className="fill-amber-300 stroke-amber-900" strokeWidth="2" />
     
-    <circle cx="50" cy="50" r="16" className="fill-amber-400 stroke-amber-900" strokeWidth="2.5" />
-    <circle cx="43" cy="45" r="3" className="fill-amber-900" />
-    <circle cx="57" cy="45" r="3" className="fill-amber-900" />
-    <path d="M 43 55 Q 50 62 57 55" className="stroke-amber-900" strokeWidth="2.5" strokeLinecap="round" />
+    <circle cx="50" cy="50" r="18" className="fill-amber-400 stroke-amber-900" strokeWidth="2" />
+    <circle cx="43" cy="45" r="3.5" className="fill-amber-900" />
+    <circle cx="57" cy="45" r="3.5" className="fill-amber-900" />
+    <path d="M 40 58 Q 50 68 60 58" className="stroke-amber-900" strokeWidth="2.5" strokeLinecap="round" />
   </motion.svg>
 );
 
-const Tape = ({ className }: { className?: string }) => (
+const Tape = ({ className, color = "bg-amber-100/80" }: { className?: string, color?: string }) => (
   <div 
     className={cn(
-      "absolute h-8 bg-amber-100/90 backdrop-blur-sm border border-amber-300 shadow-[1px_2px_0px_rgba(120,53,15,0.2)] z-20 tape",
+      "absolute h-10 backdrop-blur-[2px] border border-black/5 shadow-sm z-20 tape",
+      color,
       className
     )} 
   />
@@ -68,206 +68,206 @@ const Tape = ({ className }: { className?: string }) => (
 
 const ProjectCard = ({ title, desc, img, rotation = 0 }: { title: string, desc: string, img: string, rotation?: number }) => (
   <motion.div 
-    drag
-    dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-    whileDrag={{ scale: 1.05, rotate: 0, zIndex: 100 }}
-    whileHover={{ rotate: 0, scale: 1.02 }}
-    initial={{ rotate: rotation, opacity: 0, y: 20 }}
+    initial={{ rotate: rotation, opacity: 0, y: 40 }}
     whileInView={{ opacity: 1, y: 0 }}
+    whileHover={{ rotate: 0, scale: 1.05, y: -10 }}
+    transition={{ type: "spring", stiffness: 300, damping: 20 }}
     viewport={{ once: true }}
-    className="relative group cursor-grab active:cursor-grabbing w-full max-w-[400px] mx-auto md:mx-0"
+    className="relative group cursor-pointer w-full max-w-[450px]"
   >
-    <div className="bg-white p-3 pb-12 border-2 border-amber-900 shadow-[6px_6px_0px_theme(colors.amber.900)] transition-all group-hover:shadow-[10px_10px_0px_theme(colors.amber.900)]">
-      <div className="aspect-video bg-amber-200 border border-amber-900 overflow-hidden">
+    <div className="bg-white p-4 pb-14 border border-amber-900/10 shadow-[20px_20px_60px_rgba(120,53,15,0.08)] group-hover:shadow-[30px_30px_80px_rgba(120,53,15,0.12)] transition-shadow">
+      <div className="aspect-[4/3] bg-amber-50 overflow-hidden relative">
         <img 
           src={img} 
           alt={title} 
-          className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity grayscale-0 sepia-filter" 
+          className="w-full h-full object-cover sepia-filter group-hover:sepia-0 group-hover:scale-110 transition-all duration-700 ease-out" 
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-amber-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
-      <div className="mt-4 px-2">
-        <h3 className="text-3xl font-bold font-caveat">{title}</h3>
-        <p className="text-xl opacity-80 font-caveat leading-tight">{desc}</p>
+      <div className="mt-6 px-2">
+        <h3 className="text-3xl font-bold font-outfit uppercase tracking-tighter mb-1">{title}</h3>
+        <p className="text-xl opacity-60 font-hand leading-tight">{desc}</p>
       </div>
-      <div className="absolute top-2 right-2 opacity-30 group-hover:opacity-100 group-hover:animate-spin transition-opacity">
-        <Sparkles size={16} />
+      <div className="absolute bottom-4 right-6 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
+        <Rocket size={24} className="text-amber-500" />
       </div>
     </div>
-    <Tape className="-top-3 left-1/4 w-24 rotate-[-12deg]" />
+    <Tape className="-top-4 left-10 w-28 -rotate-6 opacity-60" />
+    <Tape className="-bottom-2 right-12 w-24 rotate-3 opacity-40 bg-amber-200" />
   </motion.div>
 );
 
-const ToolSticker = ({ label, icon: Icon, delay = 0, color = "bg-white" }: { label: string, icon: any, delay?: number, color?: string }) => (
-  <motion.div
-    initial={{ scale: 0, rotate: Math.random() * 20 - 10 }}
-    whileInView={{ scale: 1 }}
-    viewport={{ once: true }}
-    transition={{ type: "spring", stiffness: 260, damping: 20, delay }}
-    whileHover={{ scale: 1.1, rotate: 0 }}
-    className={cn(
-      "px-6 py-3 border-2 border-amber-900 shadow-[4px_4px_0px_theme(colors.amber.900)] flex items-center gap-3 cursor-default transition-transform",
-      color
-    )}
-  >
-    <Icon size={20} />
-    <span className="text-xl font-bold uppercase">{label}</span>
-  </motion.div>
-);
+const ToolSticker = ({ label, icon: Icon, delay = 0, color = "bg-white" }: { label: string, icon: any, delay?: number, color?: string }) => {
+  const [rotation, setRotation] = useState(0);
+  
+  useEffect(() => {
+    setRotation(Math.random() * 20 - 10);
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ scale: 0, rotate: 0 }}
+      animate={{ scale: 1, rotate: rotation }}
+      viewport={{ once: true }}
+      transition={{ type: "spring", stiffness: 260, damping: 20, delay }}
+      whileHover={{ scale: 1.15, rotate: 0, zIndex: 30 }}
+      className={cn(
+        "px-8 py-4 border border-amber-900/10 shadow-[10px_10px_30px_rgba(0,0,0,0.05)] flex items-center gap-4 cursor-default transition-all hover:shadow-xl",
+        color
+      )}
+    >
+      <Icon size={24} className="text-amber-900/70" />
+      <span className="text-xl font-bold uppercase font-outfit tracking-widest">{label}</span>
+    </motion.div>
+  );
+};
 
 const Polaroid = ({ img, caption, rotation = 0 }: { img: string, caption: string, rotation?: number }) => (
   <motion.div
-    whileHover={{ scale: 1.05, rotate: 0, zIndex: 10 }}
-    initial={{ opacity: 0, scale: 0.9 }}
+    whileHover={{ scale: 1.08, rotate: rotation / 2, zIndex: 10 }}
+    initial={{ opacity: 0, scale: 0.9, rotate: rotation }}
     whileInView={{ opacity: 1, scale: 1 }}
     viewport={{ once: true }}
     className={cn(
-      "bg-white p-4 pb-12 border-2 border-amber-900 shadow-[8px_8px_0px_rgba(120,53,15,0.1)] transition-all break-inside-avoid",
-      rotation > 0 ? "rotate-2" : "-rotate-2"
+      "bg-white p-4 pb-16 border border-amber-900/5 shadow-[15px_15px_40px_rgba(0,0,0,0.08)] transition-all break-inside-avoid relative",
+      rotation > 0 ? "rotate-3" : "-rotate-3"
     )}
   >
-    <div className="aspect-square bg-amber-50 border border-amber-900 overflow-hidden mb-4">
-      <img src={img} alt={caption} className="w-full h-full object-cover sepia-filter hover:sepia-0 transition-all duration-500" />
+    <div className="aspect-square bg-amber-50 overflow-hidden mb-6 relative">
+      <img src={img} alt={caption} className="w-full h-full object-cover sepia-filter hover:sepia-0 grayscale-[0.2] hover:grayscale-0 transition-all duration-700" />
+      <div className="absolute inset-0 border-[10px] border-white/10 pointer-events-none" />
     </div>
-    <p className="text-2xl font-caveat text-center font-bold leading-none">{caption}</p>
-    <Tape className="-top-3 left-1/2 -translate-x-1/2 w-20 rotate-1 opacity-60" />
+    <p className="text-3xl font-hand text-center font-bold tracking-tight text-amber-900/80">{caption}</p>
+    <Tape className="-top-5 left-1/2 -translate-x-1/2 w-24 rotate-1 opacity-70 bg-amber-100/90" />
   </motion.div>
 );
 
 const TrackItem = ({ title, artist, time }: { title: string, artist: string, time: string }) => (
-  <div className="flex items-center justify-between py-4 border-b border-amber-900/10 group cursor-pointer hover:bg-amber-100/50 px-2 transition-colors">
-    <div className="flex items-center gap-4">
-      <div className="w-10 h-10 bg-amber-200 border border-amber-900 flex items-center justify-center text-amber-900 font-bold group-hover:bg-amber-400 transition-colors">
-        <Zap size={16} className="group-hover:animate-bounce" />
+  <div className="flex items-center justify-between py-5 border-b border-amber-900/5 group cursor-pointer hover:bg-amber-100/30 px-4 transition-all rounded-lg">
+    <div className="flex items-center gap-5">
+      <div className="w-12 h-12 bg-amber-50 border border-amber-900/10 flex items-center justify-center text-amber-900/40 group-hover:text-amber-600 transition-colors">
+        <Zap size={20} className="group-hover:animate-bounce" />
       </div>
       <div>
-        <h4 className="text-2xl font-bold leading-none">{title}</h4>
-        <p className="text-xl opacity-60 leading-none">{artist}</p>
+        <h4 className="text-2xl font-bold font-outfit uppercase tracking-tighter leading-none mb-1">{title}</h4>
+        <p className="text-xl font-hand opacity-50 leading-none">{artist}</p>
       </div>
     </div>
-    <span className="text-xl italic opacity-40">{time}</span>
+    <span className="text-lg font-outfit opacity-30 group-hover:opacity-100 transition-opacity italic">{time}</span>
   </div>
 );
 
-const TestimonialNote = ({ text, author, rotation = 0, color = "bg-amber-100" }: { text: string, author: string, rotation?: number, color?: string }) => (
+const TestimonialNote = ({ text, author, rotation = 0, color = "bg-amber-50" }: { text: string, author: string, rotation?: number, color?: string }) => (
   <motion.div
-    drag
-    dragConstraints={{ left: -10, right: 10, top: -10, bottom: 10 }}
     whileHover={{ scale: 1.05, rotate: 0, zIndex: 10 }}
-    initial={{ rotate: rotation, opacity: 0, y: 20 }}
+    initial={{ rotate: rotation, opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     className={cn(
-      "p-6 border-2 border-amber-900 shadow-[4px_4px_0px_theme(colors.amber.900)] relative max-w-[280px] cursor-grab active:cursor-grabbing",
+      "p-8 border border-amber-900/5 shadow-[20px_20px_50px_rgba(120,53,15,0.05)] relative max-w-[320px] transition-all",
       color
     )}
   >
-    <div className="flex justify-between items-start mb-4">
-      <MessageCircle size={20} className="opacity-30" />
-      <div className="w-3 h-3 rounded-full bg-amber-900/10" />
+    <div className="flex justify-between items-start mb-6">
+      <MessageCircle size={24} className="text-amber-400/50" />
+      <div className="w-4 h-4 rounded-full bg-amber-900/5" />
     </div>
-    <p className="text-2xl font-caveat italic leading-tight mb-6">"{text}"</p>
-    <div className="border-t border-amber-900/20 pt-2 text-right">
-      <p className="text-xl font-bold font-caveat">- {author}</p>
+    <p className="text-2xl font-hand italic leading-snug mb-8 text-amber-950/80">"{text}"</p>
+    <div className="border-t border-amber-900/10 pt-4">
+      <p className="text-xl font-bold font-outfit uppercase tracking-wider text-amber-600">- {author}</p>
     </div>
-    <Tape className="-top-3 left-1/3 w-20 rotate-12 opacity-80" />
+    <Tape className="-top-4 left-1/4 w-24 rotate-12 opacity-90" />
   </motion.div>
 );
 
 const TimelineItem = ({ year, title, company, desc, side = "left" }: { year: string, title: string, company: string, desc: string, side?: "left" | "right" }) => (
   <div className={cn(
-    "flex w-full mb-16 items-center justify-between",
+    "flex w-full mb-20 items-center justify-between",
     side === "right" ? "flex-row-reverse" : "flex-row"
   )}>
     <div className="hidden md:block w-5/12" />
-    <div className="z-20 flex items-center order-1 bg-amber-400 border-4 border-amber-900 shadow-[4px_4px_0px_theme(colors.amber.900)] w-14 h-14 rounded-full relative group hover:scale-110 transition-transform">
-      <h1 className="mx-auto font-bold text-xl uppercase">{year}</h1>
-      <div className="absolute -top-1 -right-1 group-hover:block hidden">
-        <Sparkles size={14} className="text-amber-900" />
+    <div className="z-20 flex items-center order-1 bg-amber-400 border border-amber-900/20 shadow-xl w-16 h-16 rounded-full relative group hover:scale-110 transition-transform">
+      <h1 className="mx-auto font-bold text-2xl font-outfit">{year}</h1>
+      <div className="absolute -top-2 -right-2 group-hover:block hidden">
+        <Sparkles size={20} className="text-amber-900" />
       </div>
     </div>
     <motion.div 
-      initial={{ x: side === "left" ? -50 : 50, opacity: 0 }}
+      initial={{ x: side === "left" ? -60 : 60, opacity: 0 }}
       whileInView={{ x: 0, opacity: 1 }}
       viewport={{ once: true }}
       className={cn(
-        "order-1 bg-white p-6 border-2 border-amber-900 shadow-[8px_8px_0px_theme(colors.amber.400)] w-full md:w-5/12 relative group",
+        "order-1 bg-white p-8 border border-amber-900/5 shadow-[30px_30px_60px_rgba(0,0,0,0.04)] w-full md:w-5/12 relative group",
         side === "right" ? "rotate-1" : "-rotate-1"
       )}
     >
-      <h3 className="mb-1 font-bold text-amber-950 text-2xl md:text-3xl uppercase leading-none">{title}</h3>
-      <h4 className="mb-4 font-bold text-amber-600 text-xl italic">{company}</h4>
-      <p className="text-2xl leading-tight opacity-90">{desc}</p>
-      <Tape className={cn("-top-4 w-28", side === "left" ? "-right-6 rotate-12" : "-left-6 -rotate-12")} />
-      
-      <div className={cn(
-        "absolute top-1/2 -translate-y-1/2 hidden md:block",
-        side === "right" ? "-right-8" : "-left-8"
-      )}>
-        <PenTool className="opacity-10 group-hover:opacity-100 transition-opacity" size={24} />
-      </div>
+      <h3 className="mb-2 font-bold font-outfit text-amber-950 text-3xl uppercase tracking-tighter leading-none">{title}</h3>
+      <h4 className="mb-6 font-bold font-hand text-amber-500 text-2xl italic">{company}</h4>
+      <p className="text-2xl font-hand leading-relaxed opacity-70">{desc}</p>
+      <Tape className={cn("-top-5 w-32", side === "left" ? "-right-8 rotate-12" : "-left-8 -rotate-12")} />
     </motion.div>
   </div>
 );
 
 const ProcessCard = ({ number, title, desc, icon: Icon, rotation = 0 }: { number: string, title: string, desc: string, icon: any, rotation?: number }) => (
   <motion.div
-    initial={{ scale: 0.8, opacity: 0 }}
+    initial={{ scale: 0.9, opacity: 0 }}
     whileInView={{ scale: 1, opacity: 1 }}
     viewport={{ once: true }}
-    whileHover={{ y: -10, rotate: rotation + 2 }}
+    whileHover={{ y: -15, rotate: rotation / 2 }}
     className={cn(
-      "bg-white p-8 border-2 border-amber-900 shadow-[10px_10px_0px_theme(colors.amber.900)] relative min-w-[260px] flex-1",
+      "bg-white p-10 border border-amber-900/5 shadow-[25px_25px_60px_rgba(0,0,0,0.06)] relative min-w-[280px] flex-1 transition-all",
       rotation > 0 ? "rotate-2" : "-rotate-2"
     )}
   >
-    <div className="absolute -top-6 -left-6 w-12 h-12 bg-amber-400 border-2 border-amber-900 flex items-center justify-center font-bold text-2xl rotate-[-12deg]">
+    <div className="absolute -top-7 -left-7 w-14 h-14 bg-amber-400 border border-amber-900/10 flex items-center justify-center font-bold text-3xl font-outfit rotate-[-10deg] shadow-lg">
       {number}
     </div>
-    <div className="mb-4 text-amber-600">
-      <Icon size={40} strokeWidth={1.5} />
+    <div className="mb-8 text-amber-500">
+      <Icon size={48} strokeWidth={1} />
     </div>
-    <h3 className="text-3xl font-bold uppercase mb-2">{title}</h3>
-    <p className="text-2xl leading-tight opacity-80">{desc}</p>
-    <Tape className="-top-3 right-4 w-20 rotate-[-8deg] opacity-50" />
+    <h3 className="text-3xl font-bold font-outfit uppercase tracking-tighter mb-4">{title}</h3>
+    <p className="text-2xl font-hand leading-relaxed opacity-60">{desc}</p>
+    <Tape className="-top-4 right-6 w-24 rotate-[-10deg] opacity-40 bg-amber-200" />
   </motion.div>
 );
 
 const FAQItem = ({ question, answer, rotation = 0 }: { question: string, answer: string, rotation?: number }) => (
   <motion.div 
-    initial={{ x: -20, opacity: 0 }}
+    initial={{ x: -30, opacity: 0 }}
     whileInView={{ x: 0, opacity: 1 }}
     viewport={{ once: true }}
     className={cn(
-      "p-6 bg-white border-2 border-amber-900 shadow-[6px_6px_0px_theme(colors.amber.900)] mb-6 last:mb-0",
+      "p-8 bg-white border border-amber-900/5 shadow-[20px_20px_50px_rgba(0,0,0,0.04)] mb-8 last:mb-0 relative group",
       rotation > 0 ? "rotate-1" : "-rotate-1"
     )}
   >
-    <h4 className="text-2xl font-bold uppercase mb-2 flex items-center gap-2">
-      <Sparkles size={18} className="text-amber-400" /> {question}
+    <h4 className="text-3xl font-bold font-outfit uppercase tracking-tighter mb-4 flex items-center gap-3">
+      <Sparkles size={22} className="text-amber-400 group-hover:scale-125 transition-transform" /> {question}
     </h4>
-    <p className="text-2xl leading-tight opacity-90 italic">"{answer}"</p>
+    <p className="text-2xl font-hand leading-relaxed opacity-60 italic border-l-4 border-amber-100 pl-6">"{answer}"</p>
   </motion.div>
 );
 
 const ServiceCard = ({ icon: Icon, title, desc, price, rotation = 0 }: { icon: any, title: string, desc: string, price: string, rotation?: number }) => (
   <motion.div
-    whileHover={{ y: -5, rotate: 0 }}
+    whileHover={{ y: -10, rotate: 0, scale: 1.02 }}
     className={cn(
-      "bg-white p-8 border-2 border-amber-900 shadow-[8px_8px_0px_theme(colors.amber.900)] relative flex flex-col items-center text-center group transition-all",
-      rotation > 0 ? "rotate-1" : "-rotate-1"
+      "bg-white p-10 border border-amber-900/5 shadow-[25px_25px_70px_rgba(120,53,15,0.06)] relative flex flex-col items-center text-center group transition-all",
+      rotation > 0 ? "rotate-2" : "-rotate-2"
     )}
   >
-    <div className="w-16 h-16 bg-amber-400 border-2 border-amber-900 flex items-center justify-center mb-6 -rotate-3 group-hover:rotate-0 transition-transform">
-      <Icon size={32} />
+    <div className="w-20 h-20 bg-amber-400 border border-amber-900/5 flex items-center justify-center mb-8 -rotate-6 group-hover:rotate-0 transition-transform shadow-lg">
+      <Icon size={40} className="text-amber-950" />
     </div>
-    <h3 className="text-3xl font-bold uppercase mb-4">{title}</h3>
-    <p className="text-xl opacity-80 mb-6 font-caveat leading-tight">{desc}</p>
-    <div className="mt-auto pt-4 border-t-2 border-dashed border-amber-900/20 w-full flex items-center justify-center gap-2">
-      <Sparkles size={14} className="text-amber-400" />
-      <span className="text-2xl font-bold italic text-amber-800">{price}</span>
-      <Sparkles size={14} className="text-amber-400" />
+    <h3 className="text-4xl font-bold font-outfit uppercase tracking-tighter mb-6">{title}</h3>
+    <p className="text-2xl opacity-60 font-hand leading-relaxed mb-8">{desc}</p>
+    <div className="mt-auto pt-6 border-t border-dashed border-amber-900/10 w-full flex items-center justify-center gap-3">
+      <Sparkles size={18} className="text-amber-400" />
+      <span className="text-3xl font-bold font-hand italic text-amber-600">{price}</span>
+      <Sparkles size={18} className="text-amber-400" />
     </div>
-    <Tape className="-top-3 -right-2 w-20 rotate-12 opacity-40" />
+    <Tape className="-top-4 -right-2 w-28 rotate-12 opacity-60 bg-amber-50" />
   </motion.div>
 );
 
@@ -282,103 +282,111 @@ export default function Portfolio() {
   ];
 
   return (
-    <div className="min-h-screen overflow-x-hidden relative font-caveat text-amber-950">
-      {/* Background Pattern */}
-      <div className="fixed inset-0 pointer-events-none opacity-20 bg-pattern z-0" />
+    <div className="min-h-screen overflow-x-hidden relative font-outfit text-amber-950 font-[450] selection:bg-amber-300/30">
+      {/* Texture & Pattern Overlays */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-noise z-[100]" />
+      <div className="fixed inset-0 pointer-events-none bg-pattern z-0" />
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 w-full z-50 p-4 md:p-8 flex justify-between items-center pointer-events-none">
+      <nav className="fixed top-8 left-1/2 -translate-x-1/2 z-[90] w-fit px-2 py-2 glass rounded-full shadow-2xl flex items-center gap-1 md:gap-2">
         <motion.div 
-          initial={{ x: -50, opacity: 0 }}
+          initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="bg-amber-400 px-4 py-2 border-2 border-amber-900 shadow-[4px_4px_0px_theme(colors.amber.900)] -rotate-2 pointer-events-auto cursor-pointer hover:rotate-0 transition-transform"
+          className="px-4 py-2 border-r border-amber-900/10 mr-2"
         >
-          <span className="text-2xl font-bold uppercase">Journal.</span>
+          <span className="text-xl font-bold uppercase tracking-tighter">Pongo.</span>
         </motion.div>
         
-        <motion.div 
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="flex gap-2 md:gap-4 pointer-events-auto"
-        >
-          <a href="#about" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">About</a>
-          <a href="#projects" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Work</a>
-          <a href="#journey" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Journey</a>
-          <a href="#process" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Process</a>
-          <a href="#services" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Offer</a>
-          <a href="#tools" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Tools</a>
-          <a href="#bits" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Bits</a>
-          <a href="#vibe" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Vibe</a>
-          <a href="#testimonials" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Words</a>
-          <a href="#contact" className="bg-amber-100 hover:bg-amber-300 px-3 py-1 md:px-5 md:py-2 border-2 border-amber-900 shadow-[3px_3px_0px_theme(colors.amber.900)] text-lg md:text-xl font-bold transition-all hover:-translate-y-1">Say Hi</a>
-        </motion.div>
+        {[
+          ["About", "#about"],
+          ["Work", "#projects"],
+          ["Tools", "#tools"],
+          ["Contact", "#contact"]
+        ].map(([label, href]) => (
+          <a 
+            key={label}
+            href={href} 
+            className="px-4 py-2 rounded-full hover:bg-amber-900 overflow-hidden relative group transition-colors"
+          >
+             <span className="relative z-10 text-sm md:text-base font-bold uppercase tracking-widest group-hover:text-amber-50 transition-colors">
+              {label}
+             </span>
+          </a>
+        ))}
       </nav>
 
       <main className="relative z-10">
         {/* HERO SECTION */}
-        <section id="hero" className="min-h-screen flex flex-col items-center justify-center p-6 pt-24 text-center">
-          <div className="relative">
+        <section id="hero" className="min-h-screen flex flex-col items-center justify-center p-6 pt-32 text-center relative">
+          <div className="relative z-10">
             <motion.div
-              initial={{ scale: 0.5, opacity: 0, rotate: -10 }}
-              animate={{ scale: 1, opacity: 1, rotate: -2 }}
-              transition={{ type: "spring", damping: 10 }}
-              className="bg-amber-400 p-8 md:p-12 border-4 border-amber-900 shadow-[10px_10px_0px_theme(colors.amber.900)] relative max-w-4xl"
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, ease: "circOut" }}
+              className="max-w-5xl"
             >
-              <h1 className="text-6xl md:text-9xl font-bold uppercase tracking-tight leading-none mb-2">
-                Creative Bits!
-              </h1>
-              <div className="flex items-center justify-center gap-3 text-2xl md:text-4xl font-bold">
-                <Sparkles className="animate-pulse" />
-                <p>Messy, but full of ideas.</p>
-                <Sparkles className="animate-pulse delay-75" />
+               <div className="inline-block px-4 py-1 bg-amber-400 text-amber-950 text-sm font-bold uppercase tracking-[0.3em] mb-8 shadow-sm">
+                Creative Bits & Bytes
               </div>
-              <Tape className="-top-4 -right-4 w-32 rotate-12" />
-              <Tape className="-bottom-4 -left-4 w-32 rotate-[-8deg] hidden md:block" />
+              <h1 className="text-[12vw] md:text-[8vw] font-bold uppercase tracking-tighter leading-[0.85] mb-8 font-outfit">
+                Messy but <br />
+                <span className="text-amber-600 italic font-hand lowercase tracking-normal">intentional.</span>
+              </h1>
+              <div className="flex items-center justify-center gap-6 text-2xl md:text-3xl font-hand opacity-60">
+                <Sparkles className="animate-float" />
+                <p>Digital designer exploring the beauty of organized chaos.</p>
+                <Sparkles className="animate-float delay-500" />
+              </div>
             </motion.div>
 
-            {/* Decorative Flowers */}
-            <CuteFlower className="absolute -top-16 -right-16 md:-top-24 md:-right-24 w-32 h-32 md:w-48 md:h-48" />
-            <CuteFlower className="absolute -bottom-12 -left-12 w-20 h-20 md:w-32 md:h-32" rotationBase={45} delay={1} />
+            {/* Floating Assets */}
+            <div className="absolute -top-32 -left-32 opacity-10 blur-sm pointer-events-none hidden lg:block">
+              <CuteFlower className="w-96 h-96" />
+            </div>
           </div>
 
           <motion.div 
             animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="absolute bottom-10 flex flex-col items-center opacity-60 text-xl font-bold"
+            transition={{ repeat: Infinity, duration: 2.5 }}
+            className="absolute bottom-12 flex flex-col items-center opacity-30 text-sm font-bold tracking-widest uppercase"
           >
-            <span>Scroll for secrets</span>
-            <ChevronDown />
+            <span>Dip into the journal</span>
+            <ChevronDown size={20} className="mt-2" />
           </motion.div>
         </section>
 
         {/* ABOUT SECTION */}
-        <section id="about" className="min-h-screen py-24 px-6 md:px-20 flex flex-col lg:flex-row items-center justify-center gap-16 md:gap-24">
+        <section id="about" className="min-h-screen py-32 px-6 md:px-20 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-20">
           <motion.div 
-            whileHover={{ rotate: 0, scale: 1.05 }}
-            className="relative cursor-pointer group"
+            initial={{ opacity: 0, rotate: -5, scale: 0.95 }}
+            whileInView={{ opacity: 1, rotate: 3, scale: 1 }}
+            viewport={{ once: true }}
+            className="relative cursor-pointer group flex-1"
             onClick={() => setCurrentAboutImg((prev) => (prev + 1) % aboutImages.length)}
           >
-            <div className="bg-amber-100 p-4 pb-20 border-4 border-amber-900 shadow-[12px_12px_0px_theme(colors.amber.900)] rotate-3 transition-transform group-hover:rotate-0">
-              <div className="w-[280px] h-[280px] md:w-[400px] md:h-[400px] bg-amber-300 border-2 border-amber-900 overflow-hidden">
+            <div className="bg-white p-6 pb-24 shadow-[40px_40px_80px_rgba(120,53,15,0.08)] transition-all group-hover:shadow-[50px_50px_100px_rgba(120,53,15,0.12)]">
+              <div className="aspect-square bg-amber-50 overflow-hidden relative">
                 <AnimatePresence mode="wait">
                   <motion.img 
                     key={currentAboutImg}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0, filter: "sepia(1) blur(10px)" }}
+                    animate={{ opacity: 1, filter: "sepia(0.2) blur(0px)" }}
+                    exit={{ opacity: 0, filter: "sepia(1) blur(10px)" }}
+                    transition={{ duration: 0.5 }}
                     src={aboutImages[currentAboutImg]} 
                     alt="Me" 
-                    className="w-full h-full object-cover sepia-filter" 
+                    className="w-full h-full object-cover" 
                   />
                 </AnimatePresence>
+                <div className="absolute inset-0 bg-amber-950/10 mix-blend-overlay" />
               </div>
-              <div className="absolute bottom-6 left-0 w-full text-center">
-                <p className="text-3xl font-bold italic">"Just an explorer."</p>
+              <div className="absolute bottom-8 left-0 w-full text-center">
+                <p className="text-4xl font-bold italic font-hand text-amber-900/60 transition-transform group-hover:scale-110">"Snapshot of a curious mind."</p>
               </div>
             </div>
-            <Tape className="-top-4 left-1/2 -translateX-1/2 w-40 rotate-1" />
-            <div className="absolute -bottom-10 right-0 bg-amber-100 px-4 py-2 border-2 border-amber-900 shadow-[4px_4px_0px_theme(colors.amber.900)] font-bold animate-bounce hidden md:block">
-              Click to swap!
+            <Tape className="-top-6 left-1/2 -translateX-1/2 w-48 rotate-2 opacity-80" />
+            <div className="absolute -bottom-8 -right-8 bg-amber-950 text-amber-50 px-6 py-3 font-bold uppercase tracking-widest text-xs hidden md:block rotate-12 shadow-xl">
+              Tap to shuffle
             </div>
           </motion.div>
 
@@ -386,438 +394,361 @@ export default function Portfolio() {
             initial={{ x: 50, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
             viewport={{ once: true }}
-            className="bg-white p-8 md:p-12 border-2 border-amber-900 shadow-[8px_8px_0px_theme(colors.amber.400)] max-w-2xl rotate-[-1deg]"
+            className="flex-1 space-y-10"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 flex items-center gap-4">
-              <PenTool /> A Bit Random
-            </h2>
-            <div className="text-2xl md:text-3xl space-y-6 leading-relaxed">
+            <div className="space-y-4">
+              <h2 className="text-6xl md:text-8xl font-bold uppercase tracking-tighter leading-none">
+                Not just <br />
+                <span className="highlight">pixels.</span>
+              </h2>
+            </div>
+            <div className="text-2xl md:text-3xl font-hand space-y-8 leading-relaxed text-amber-950/70">
               <p>
-                Hi! I'm a <span className="highlight">Creative Developer</span> based in a world of pixels. I love building things that feel alive, a little messy, and very human.
+                I'm a <span className="text-amber-600 font-bold">Creative Developer</span> who believes that digital interfaces should feel as warm and tactile as a physical notebook.
               </p>
               <p>
-                I believe that design shouldn't just be "clean"; it should have a <span className="highlight">soul</span>. Like a scrapbook, my code is a collection of memories and experiments.
+                My process is a slow dance between chaotic ideation and surgical implementation. I don't build websites; I curate <span className="highlight uppercase text-sm tracking-widest font-outfit">Digital Experiences</span> that leave a thumbprint on the user's memory.
               </p>
             </div>
-            <div className="mt-12 flex gap-4 opacity-50">
-              <Heart className="fill-amber-400 text-transparent" />
-              <Camera />
-              <Sparkles />
+            <div className="pt-10 flex gap-8 opacity-20 hover:opacity-100 transition-opacity">
+              <Heart className="hover:fill-red-500 hover:text-red-500 cursor-pointer transition-all" size={32} />
+              <Camera size={32} />
+              <Coffee size={32} />
             </div>
           </motion.div>
         </section>
 
         {/* PROJECTS SECTION */}
-        <section id="projects" className="min-h-screen py-24 px-6 md:px-20 bg-amber-100/30">
-          <h2 className="text-6xl md:text-8xl font-bold text-center mb-20 underline decoration-amber-400 decoration-wavy underline-offset-12">
-            Stuff I've Made
-          </h2>
+        <section id="projects" className="py-32 px-6 md:px-20 bg-amber-50/20 relative">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row items-end justify-between mb-24 gap-8">
+              <h2 className="text-7xl md:text-9xl font-bold uppercase tracking-tighter leading-none">
+                Selected <br />
+                <span className="text-amber-500 italic font-hand lowercase">works.</span>
+              </h2>
+              <p className="text-2xl font-hand opacity-50 max-w-sm">A collection of things I've built with love, sweat, and several cups of tea.</p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-16 max-w-7xl mx-auto items-center">
-            <ProjectCard 
-              title="Dreamscape.js" 
-              desc="A library for messy visuals" 
-              img="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=800" 
-              rotation={-4}
-            />
-            <ProjectCard 
-              title="Ink & Code" 
-              desc="Digital calligraphy engine" 
-              img="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800" 
-              rotation={3}
-            />
-            <ProjectCard 
-              title="Moodboard" 
-              desc="UI for storytellers" 
-              img="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800"
-              rotation={-2} 
-            />
-             <ProjectCard 
-              title="Retro Shader" 
-              desc="Old CPU simulator" 
-              img="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=800"
-              rotation={5} 
-            />
-             <ProjectCard 
-              title="Paper API" 
-              desc="Documentation for artists" 
-              img="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800"
-              rotation={-3} 
-            />
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-20 items-start">
+              <ProjectCard 
+                title="Hyperlight" 
+                desc="A modular animation library for the web." 
+                img="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=800" 
+                rotation={-3}
+              />
+              <ProjectCard 
+                title="Vantage UI" 
+                desc="Premium interface kit for creators." 
+                img="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800" 
+                rotation={2}
+              />
+              <div className="lg:pt-24">
+                <ProjectCard 
+                  title="Canvas Soul" 
+                  desc="Generative art platform." 
+                  img="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800"
+                  rotation={-4} 
+                />
+              </div>
+              <ProjectCard 
+                title="Monolith" 
+                desc="Minimalistic state engine." 
+                img="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=800"
+                rotation={3} 
+              />
+              <ProjectCard 
+                title="Arcane.js" 
+                desc="The future of visual scripting." 
+                img="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800"
+                rotation={-2} 
+              />
+            </div>
           </div>
         </section>
 
         {/* JOURNEY SECTION */}
-        <section id="journey" className="py-24 px-6 md:px-20 relative bg-amber-50/50">
+        <section id="journey" className="py-32 px-6 md:px-20 relative bg-[#fffdf5]">
           <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-center gap-6 mb-24">
-              <Briefcase size={60} className="text-amber-900" />
-              <h2 className="text-6xl md:text-8xl font-bold uppercase underline decoration-amber-400 decoration-wavy underline-offset-12">The Journey</h2>
-            </div>
+             <div className="text-center mb-32">
+                <h2 className="text-8xl md:text-[10rem] font-bold uppercase tracking-tighter leading-none opacity-[0.05] absolute top-20 left-1/2 -translate-x-1/2 w-full">The Story</h2>
+                <h2 className="text-6xl md:text-8xl font-bold uppercase tracking-tighter relative z-10">Professional Path</h2>
+             </div>
             
             <div className="relative wrap overflow-hidden p-0 md:p-10 h-full">
-              {/* Timeline center line */}
-              <div className="absolute border-opacity-20 border-amber-900 h-full border-4 left-1/2 -translate-x-1/2 hidden md:block border-dashed" />
+              <div className="absolute border-opacity-10 border-amber-900 h-full border-2 left-1/2 -translate-x-1/2 hidden md:block border-dashed" />
               
               <TimelineItem 
-                year="2024" 
-                title="Lead Creative" 
-                company="Magic Studio" 
-                desc="Building messy-yet-functional interactive experiences for high-end clients." 
+                year="Present" 
+                title="Design Engineer" 
+                company="Independent" 
+                desc="Crafting bespoke digital experiences for global brands and startups that value design." 
                 side="left"
               />
               <TimelineItem 
                 year="2022" 
-                title="Frontend Artist" 
-                company="Dream Lab" 
-                desc="Crafting pixels into smooth, soul-filled applications using modern web tech." 
+                title="Sr. Frontend Dev" 
+                company="Flux Studios" 
+                desc="Led the development of high-performance interactive 3D web applications." 
                 side="right"
               />
               <TimelineItem 
                 year="2020" 
-                title="Visual Designer" 
-                company="Paper Pixels" 
-                desc="Where it all began. Learning the art of balancing chaos and order in design." 
+                title="Creative Coder" 
+                company="Neon Labs" 
+                desc="Experimented with WebGL and shaders to push the boundaries of browser tech." 
                 side="left"
               />
             </div>
           </div>
-          
-          <div className="absolute top-1/4 right-0 opacity-10 -rotate-12 pointer-events-none">
-            <CuteFlower className="w-[300px] h-[300px]" rotationBase={-10} />
-          </div>
         </section>
 
         {/* PROCESS SECTION */}
-        <section id="process" className="py-24 px-6 md:px-20 bg-amber-400/10">
+        <section id="process" className="py-32 px-6 md:px-20 bg-amber-400/[0.03]">
           <div className="max-w-7xl mx-auto">
-             <div className="text-center mb-24">
-                <h2 className="text-6xl md:text-8xl font-bold uppercase inline-block relative rotate-1">
-                  How the Magic Happens
-                  <div className="absolute -bottom-2 -left-1 w-[110%] h-4 bg-amber-300/60 -z-10 -rotate-1" />
+             <div className="flex flex-col md:flex-row items-center justify-between mb-32 gap-12">
+                <h2 className="text-7xl md:text-9xl font-bold uppercase tracking-tighter max-w-2xl leading-[0.85]">
+                  How I <br />
+                  <span className="highlight">build things.</span>
                 </h2>
-                <p className="text-3xl mt-4 max-w-2xl mx-auto italic">Step-by-step into the creative chaos.</p>
+                <div className="bg-amber-100 p-8 border border-amber-900/5 rotate-2 max-w-xs shadow-xl font-hand text-2xl">
+                  "Chaos is the beginning of every great idea, but structure is how we survive it."
+                </div>
              </div>
 
-             <div className="flex flex-col lg:flex-row gap-12 lg:gap-8 items-stretch pt-10">
+             <div className="flex flex-col lg:flex-row gap-16 lg:gap-10 items-stretch">
                 <ProcessCard 
                   number="01" 
-                  title="Ideation" 
-                  desc="Lots of tea, napkins, and messy scribbles on various notebooks." 
-                  icon={Briefcase}
-                  rotation={-2}
+                  title="Scribble" 
+                  desc="Pen, paper, and unfiltered thoughts. This is where the magic (and the mess) starts." 
+                  icon={PenTool}
+                  rotation={-3}
                 />
-                <div className="hidden lg:flex items-center text-amber-400">
-                  <motion.div animate={{ x: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-                    <Sparkles size={32} />
-                  </motion.div>
-                </div>
                 <ProcessCard 
                   number="02" 
-                  title="Sketching" 
-                  desc="Turning fuzzy concepts into actual layout and user flows." 
-                  icon={PenTool}
+                  title="Wire" 
+                  desc="Connecting the dots. Translating abstract feelings into usable flows." 
+                  icon={Layers}
                   rotation={2}
                 />
-                <div className="hidden lg:flex items-center text-amber-400">
-                  <motion.div animate={{ x: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.5 }}>
-                    <Sparkles size={32} />
-                  </motion.div>
-                </div>
                 <ProcessCard 
                   number="03" 
-                  title="Crafting" 
-                  desc="High-energy coding session where pixels finally start to dance." 
+                  title="Forge" 
+                  desc="Writing code that feels like poetry. Building with longevity and performance in mind." 
                   icon={Code}
-                  rotation={-1}
+                  rotation={-2}
                 />
-                <div className="hidden lg:flex items-center text-amber-400">
-                  <motion.div animate={{ x: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 1 }}>
-                    <Sparkles size={32} />
-                  </motion.div>
-                </div>
                 <ProcessCard 
                   number="04" 
-                  title="Publish" 
-                  desc="Adding the soul, the polish, and shipping it into the wild." 
+                  title="Polished" 
+                  desc="The final 1%. Adding transitions, micro-interactions, and that special secret sauce." 
                   icon={Zap}
-                  rotation={3}
+                  rotation={4}
                 />
              </div>
           </div>
         </section>
 
         {/* SERVICES SECTION */}
-        <section id="services" className="py-24 px-6 md:px-20 bg-amber-100/50 relative">
+        <section id="services" className="py-32 px-6 md:px-20 relative overflow-hidden">
           <div className="max-w-7xl mx-auto">
-             <div className="text-center mb-24">
-                <h2 className="text-6xl md:text-8xl font-bold uppercase inline-block relative -rotate-1">
-                  How I Can Help
-                  <div className="absolute -bottom-2 -right-1 w-[110%] h-4 bg-amber-300/60 -z-10 rotate-1" />
-                </h2>
-                <p className="text-3xl mt-4 max-w-2xl mx-auto italic">Crafting digital experiences with a soul.</p>
+             <div className="text-center mb-32">
+                <span className="font-outfit font-bold uppercase tracking-[0.4em] text-sm text-amber-500">Collaborate</span>
+                <h2 className="text-7xl md:text-9xl font-bold uppercase tracking-tighter mt-4 leading-none">Can I help?</h2>
              </div>
 
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
                 <ServiceCard 
-                  icon={PenTool} 
-                  title="UI/UX Design" 
-                  desc="Creating messy-yet-usable interfaces that stand out from the crowd and feel human." 
-                  price="Starting with coffee"
+                  icon={Globe} 
+                  title="Web Design" 
+                  desc="Tailor-made interfaces that tell your brand's unique story through pixels." 
+                  price="Custom Quote"
+                  rotation={-3}
+                />
+                <ServiceCard 
+                  icon={Zap} 
+                  title="Development" 
+                  desc="Clean, modern codebases built with Next.js, Framer Motion, and high polish." 
+                  price="Weekly Rate"
+                  rotation={2}
+                />
+                <ServiceCard 
+                  icon={MessageCircle} 
+                  title="Strategy" 
+                  desc="Creative consulting to help refine your product's vibe and user experience." 
+                  price="Coffee & Call"
                   rotation={-2}
                 />
-                <ServiceCard 
-                  icon={Rocket} 
-                  title="Web Development" 
-                  desc="Turning static designs into living, breathing web applications with modern tech." 
-                  price="Let's build something"
-                  rotation={1}
-                />
-                <ServiceCard 
-                  icon={Coffee} 
-                  title="Consultation" 
-                  desc="Need a fresh pair of eyes on your project? I'm here for creative brainstorming." 
-                  price="1-on-1 Vibes"
-                  rotation={-1}
-                />
              </div>
-          </div>
-          
-          {/* Decorative Doodle */}
-          <div className="absolute bottom-10 right-10 opacity-5 -rotate-45 pointer-events-none">
-            <Zap size={200} />
           </div>
         </section>
 
 
         {/* TOOLS SECTION */}
-        <section id="tools" className="py-24 px-6 md:px-20 relative overflow-hidden">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col md:flex-row items-center gap-12 mb-16 md:mb-24">
-              <div className="bg-amber-400 p-6 md:p-8 border-4 border-amber-900 shadow-[10px_10px_0px_theme(colors.amber.900)] -rotate-3 relative">
-                <h2 className="text-5xl md:text-8xl font-bold uppercase leading-none">My Toolbox</h2>
-                <Tape className="-bottom-3 -right-6 w-24 rotate-12" />
-              </div>
-              <div className="relative">
-                <p className="text-3xl md:text-4xl max-w-xl italic leading-tight">
-                  These are the stickers I've collected on my laptop. Each one represents a tool I use to bring ideas to life.
-                </p>
-                <div className="absolute -top-10 -right-10 opacity-20 rotate-12 hidden md:block">
-                  <PenTool size={120} />
-                </div>
-              </div>
+        <section id="tools" className="py-32 px-6 md:px-20 relative overflow-hidden bg-white/40">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-24">
+            <div className="flex-1 space-y-8">
+              <h2 className="text-7xl md:text-[10rem] font-bold uppercase tracking-tighter leading-none opacity-[0.05] absolute top-20 left-20">Tools</h2>
+              <h2 className="text-7xl md:text-8xl font-bold uppercase tracking-tighter relative">Modern <br />Armory.</h2>
+              <p className="text-2xl md:text-3xl font-hand text-amber-950/50 max-w-md">
+                A selection of technologies I use to bridge the gap between imagination and reality.
+              </p>
             </div>
 
-            <div className="flex flex-wrap gap-4 md:gap-8 justify-center items-center">
+            <div className="flex-1 flex flex-wrap gap-8 justify-center">
               <ToolSticker label="React" icon={Code} color="bg-amber-100" delay={0.1} />
-              <ToolSticker label="Next.js" icon={Globe} color="bg-amber-200" delay={0.2} />
-              <ToolSticker label="TypeScript" icon={PenTool} color="bg-amber-300" delay={0.3} />
+              <ToolSticker label="Next.js" icon={Globe} color="bg-white" delay={0.2} />
+              <ToolSticker label="Motion" icon={Zap} color="bg-amber-400" delay={0.3} />
               <ToolSticker label="Tailwind" icon={Layers} color="bg-amber-100" delay={0.4} />
-              <ToolSticker label="Framer Motion" icon={Zap} color="bg-amber-400" delay={0.5} />
-              <ToolSticker label="UI Design" icon={Camera} color="bg-amber-200" delay={0.6} />
-              <ToolSticker label="Creative Bits" icon={Sparkles} color="bg-white" delay={0.7} />
-              <ToolSticker label="Responsive" icon={Share2} color="bg-amber-100" delay={0.8} />
-            </div>
-            
-            {/* Background Doodles */}
-            <div className="absolute top-1/2 left-0 -translate-y-1/2 opacity-5 pointer-events-none">
-              <CuteFlower className="w-[500px] h-[500px]" rotationBase={20} />
+              <ToolSticker label="TypeScript" icon={PenTool} color="bg-white" delay={0.5} />
+              <ToolSticker label="Vite" icon={Sparkles} color="bg-amber-200" delay={0.6} />
             </div>
           </div>
         </section>
 
         {/* SCRAPBOOK SECTION */}
-        <section id="bits" className="py-24 px-6 md:px-20 bg-amber-400/5">
+        <section id="bits" className="py-32 px-6 md:px-20 relative overflow-hidden">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
-              <div className="relative">
-                <h2 className="text-6xl md:text-8xl font-bold uppercase">The Scrapbook</h2>
-                <p className="text-3xl italic opacity-70 mt-2">Daily bits and digital snapshots.</p>
-                <div className="absolute -top-10 -right-20 opacity-10 rotate-12 hidden lg:block">
-                  <Camera size={100} />
-                </div>
-              </div>
-              <div className="bg-amber-900 text-white px-6 py-2 border-2 border-amber-900 rotate-2 shadow-[4px_4px_0px_rgba(120,53,15,0.3)]">
-                <span className="text-2xl font-bold uppercase italic">Volume 01.</span>
+            <div className="flex flex-col md:flex-row items-center justify-between mb-32 gap-12 text-center md:text-left">
+              <h2 className="text-7xl md:text-9xl font-bold uppercase tracking-tighter leading-none">
+                The <br />
+                <span className="text-amber-500 italic font-hand lowercase">scrapbook.</span>
+              </h2>
+              <div className="bg-amber-950 text-amber-50 px-8 py-4 rotate-3 shadow-2xl">
+                <span className="text-xl font-bold uppercase tracking-[0.3em]">Volume 02.</span>
               </div>
             </div>
 
-            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
-              <Polaroid img="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600" caption="Vintage Cameras" rotation={-3} />
-              <Polaroid img="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600" caption="Late Night Sketches" rotation={4} />
-              <Polaroid img="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=600" caption="Organized Chaos" rotation={-2} />
-              <Polaroid img="https://images.unsplash.com/photo-1493723843671-1d655e7d98f0?q=80&w=600" caption="Morning Tea" rotation={5} />
-              <Polaroid img="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=600" caption="The Setup" rotation={-4} />
-              <Polaroid img="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=600" caption="Abstract Layers" rotation={3} />
+            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-12 space-y-12">
+              <Polaroid img="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600" caption="Vintage Optics" rotation={-5} />
+              <Polaroid img="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=600" caption="Studio Vibes" rotation={4} />
+              <Polaroid img="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=600" caption="Analog Flows" rotation={-3} />
+              <Polaroid img="https://images.unsplash.com/photo-1493723843671-1d655e7d98f0?q=80&w=600" caption="Morning Ritual" rotation={6} />
+              <Polaroid img="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=600" caption="Deep Work" rotation={-4} />
+              <Polaroid img="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=600" caption="Layer Zero" rotation={3} />
             </div>
           </div>
         </section>
 
         {/* VIBE SECTION */}
-        <section id="vibe" className="py-24 px-6 md:px-20 bg-white/30">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 items-center">
-            <div className="flex-1 w-full text-center lg:text-left">
-              <div className="inline-block bg-amber-400 p-6 border-4 border-amber-900 shadow-[10px_10px_0px_theme(colors.amber.900)] -rotate-3 mb-12">
-                <h2 className="text-5xl md:text-8xl font-bold uppercase leading-none">The Vibe Box</h2>
+        <section id="vibe" className="py-32 px-6 md:px-20 bg-amber-950 text-amber-50 overflow-hidden relative">
+          <div className="absolute inset-0 opacity-10 blur-3xl pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber-400 rounded-full" />
+          </div>
+
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-24 items-center relative z-10">
+            <div className="flex-1 space-y-8 text-center lg:text-left">
+              <div className="inline-block px-4 py-2 bg-amber-400 text-amber-950 font-bold uppercase tracking-widest text-sm mb-6">
+                Now Playing
               </div>
-              <p className="text-3xl md:text-4xl italic max-w-xl mx-auto lg:mx-0 leading-tight mb-8">
-                Every line of code is written to the rhythm of these tracks. The soundtrack of my messy process.
+              <h2 className="text-7xl md:text-8xl font-bold uppercase tracking-tighter leading-none mb-6">Auditory <br />Fuel.</h2>
+              <p className="text-2xl md:text-3xl font-hand opacity-60 leading-relaxed max-w-lg mx-auto lg:mx-0">
+                The frequencies I tune into while building digital worlds. Music is half the process.
               </p>
-              <div className="flex justify-center lg:justify-start">
-                 <CuteFlower className="w-32 h-32" rotationBase={45} />
-              </div>
             </div>
             
-            <div className="w-full lg:w-[500px]">
-              <div className="bg-white p-6 md:p-10 border-2 border-amber-900 shadow-[12px_12px_0px_theme(colors.amber.400)] relative rotate-1">
-                <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-amber-900/10">
-                  <h3 className="text-3xl font-bold uppercase">Playlist</h3>
-                  <Zap className="text-amber-400 animate-pulse" />
+            <div className="w-full lg:w-[600px]">
+              <div className="bg-white/5 backdrop-blur-xl p-10 border border-white/10 shadow-2xl relative rotate-1">
+                <div className="flex items-center justify-between mb-12 pb-6 border-b border-white/10">
+                   <div className="flex items-center gap-4">
+                      <div className="w-4 h-4 bg-red-500 rounded-full animate-pulse" />
+                      <h3 className="text-2xl font-bold uppercase tracking-widest">Late Night Journal</h3>
+                   </div>
+                  <Zap className="text-amber-400" />
                 </div>
-                <div className="space-y-2">
-                  <TrackItem title="Digital Garden" artist="Echo Lake" time="3:45" />
-                  <TrackItem title="Blurry Pixels" artist="The Framers" time="4:20" />
-                  <TrackItem title="Amber Glow" artist="Caveat" time="2:15" />
-                  <TrackItem title="Scrapbook Morning" artist="Journal" time="5:10" />
-                  <TrackItem title="Static Noise" artist="Creative Bits" time="2:58" />
+                <div className="space-y-4">
+                  <TrackItem title="Digital Bloom" artist="Synapse" time="4:12" />
+                  <TrackItem title="Ether" artist="Velvet" time="3:45" />
+                  <TrackItem title="Paper Theory" artist="Mogra" time="5:20" />
+                  <TrackItem title="Static Rain" artist="Echo" time="2:58" />
                 </div>
-                <Tape className="-bottom-3 left-10 w-28 rotate-[8deg] z-20" />
+                <Tape className="-bottom-5 left-12 w-32 rotate-2 bg-amber-400/80" />
               </div>
             </div>
           </div>
         </section>
 
         {/* TESTIMONIALS SECTION */}
-        <section id="testimonials" className="py-24 px-6 md:px-20 relative overflow-hidden bg-amber-50/30">
+        <section id="testimonials" className="py-32 px-6 md:px-20 relative overflow-hidden bg-amber-50/10">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16 relative">
-              <h2 className="text-6xl md:text-8xl font-bold inline-block relative">
-                Wall of Love
-                <div className="absolute -bottom-4 left-0 w-full h-2 bg-amber-400 -rotate-1 z-[-1]" />
-              </h2>
-              <p className="text-2xl mt-4 italic opacity-70">Some scattered notes from lovely people.</p>
+            <div className="text-center mb-24">
+              <h2 className="text-7xl md:text-9xl font-bold uppercase tracking-tighter leading-none opacity-[0.05] absolute top-20 left-1/2 -translate-x-1/2 w-full">Kind Words</h2>
+              <h2 className="text-6xl md:text-8xl font-bold uppercase tracking-tighter relative z-10">Wall of Love</h2>
             </div>
             
-            <div className="flex flex-wrap justify-center gap-8 md:gap-12">
+            <div className="flex flex-wrap justify-center gap-12">
               <TestimonialNote 
-                text="The messiest code I've ever seen, but it works like magic! Truly a creative wizard." 
-                author="Sarah J. (Startup Founder)"
+                text="The most creative developer I've worked with. They bring a soul to every project." 
+                author="Sarah J. (Magic Co)"
                 rotation={-3}
-                color="bg-amber-200"
               />
               <TestimonialNote 
-                text="They really know how to make things feel human. Best aesthetic vibes I've ever seen in a dev." 
-                author="Alex Chen (Design Lead)"
-                rotation={4}
+                text="Absolutely stunning aesthetics and smooth performance. A rare combination." 
+                author="Alex Chen (Dream Lab)"
+                rotation={2}
                 color="bg-white"
               />
               <TestimonialNote 
-                text="I love the scrapbook aesthetic. It's so refreshing to see something besides generic SaaS vibes." 
-                author="Mika (Fellow Artist)"
-                rotation={-2}
-                color="bg-amber-300"
-              />
-               <TestimonialNote 
-                text="Fast, reliable, and definitely a bit weird (in a good way). Would definitely collab again!" 
-                author="David W. (Producer)"
-                rotation={5}
+                text="They transformed our messy ideas into a beautiful, cohesive digital journal." 
+                author="Mika (Studio K)"
+                rotation={-1}
                 color="bg-amber-100"
               />
             </div>
           </div>
-          
-          <div className="absolute -bottom-10 -right-10 opacity-10 rotate-45">
-            <PenTool size={200} />
-          </div>
         </section>
-
-        {/* FAQ SECTION */}
-        <section id="faq" className="py-24 px-6 md:px-20 relative">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-amber-900 text-amber-50 p-6 md:p-10 border-4 border-amber-900 shadow-[10px_10px_0px_theme(colors.amber.400)] mb-16 -rotate-1">
-              <h2 className="text-5xl md:text-7xl font-bold uppercase">Random Questions</h2>
-              <p className="text-2xl opacity-80">Things people usually ask (or I think they should).</p>
-            </div>
-            
-            <div className="space-y-8">
-              <FAQItem 
-                question="Do you work remotely?" 
-                answer="Yes! As long as there's Wi-Fi and a steady supply of caffeine, I'm good to go." 
-                rotation={-1}
-              />
-              <FAQItem 
-                question="What's with the messy style?" 
-                answer="I believe perfection is boring. Humans are messy, so digital experiences should feel human too." 
-                rotation={1}
-              />
-              <FAQItem 
-                question="Available for freelance?" 
-                answer="My schedule is often a bit chaotic, but I'm always open to hearing about cool, creative projects." 
-                rotation={-0.5}
-              />
-            </div>
-          </div>
-          
-          {/* Decorative Flowers */}
-          <div className="absolute top-0 left-0 opacity-10 -translate-x-1/2 rotate-12">
-            <CuteFlower className="w-[400px] h-[400px]" />
-          </div>
-        </section>
-
 
         {/* CONTACT SECTION */}
-        <section id="contact" className="min-h-screen py-24 px-6 flex items-center justify-center overflow-hidden">
+        <section id="contact" className="min-h-screen py-32 px-6 flex items-center justify-center overflow-hidden bg-[#fffdf5]">
           <motion.div 
-            initial={{ y: 100, opacity: 0 }}
+            initial={{ y: 80, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
-            className="max-w-3xl w-full relative group"
+            className="max-w-4xl w-full relative text-center"
           >
-            <div className="bg-amber-100 p-8 md:p-20 border-4 border-amber-900 shadow-[15px_15px_0px_theme(colors.amber.900)] rotate-1 relative z-10 text-center">
-              <h2 className="text-6xl md:text-8xl font-bold mb-8 italic">Say Hello!</h2>
-              <p className="text-3xl md:text-4xl mb-12">I'm always down for a chaotic cup of coffee and some creative talk.</p>
+            <div className="space-y-12">
+               <h2 className="text-[12vw] md:text-[8vw] font-bold uppercase tracking-tighter leading-none">
+                Start a <br />
+                <span className="text-amber-600 font-hand lowercase italic tracking-normal">conversation.</span>
+              </h2>
+              <p className="text-3xl md:text-4xl font-hand opacity-50 max-w-2xl mx-auto">
+                Have a wild idea or a structured project? I'm always looking for the next creative spark.
+              </p>
               
-              <div className="flex flex-col items-center gap-8">
+              <div className="flex flex-col items-center gap-12 pt-12">
                 <a 
-                  href="mailto:hello@pongo.dev" 
-                  className="bg-amber-400 px-8 py-4 border-4 border-amber-900 shadow-[8px_8px_0px_theme(colors.amber.900)] text-3xl md:text-4xl font-bold flex items-center gap-4 hover:-translate-y-2 hover:shadow-[12px_12px_0px_theme(colors.amber.900)] transition-all active:translate-y-0"
+                  href="mailto:pongo@design.dev" 
+                  className="group relative inline-block text-4xl md:text-6xl font-bold uppercase tracking-tighter overflow-hidden"
                 >
-                  <Mail /> hello@pongo.dev
+                  <span className="relative z-10 group-hover:text-amber-600 transition-colors">hello@pongo.dev</span>
+                  <div className="absolute bottom-0 left-0 w-full h-2 bg-amber-400 -rotate-1 group-hover:h-full transition-all duration-300 opacity-30" />
                 </a>
                 
-                <div className="flex gap-10">
-                  <a href="#" className="hover:scale-125 transition-transform">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
-                  </a>
-                  <a href="#" className="hover:scale-125 transition-transform">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
-                  </a>
-                  <a href="#" className="hover:scale-125 transition-transform">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.2-18 11.6 7.2.1 11.6-4.1 12.1-11.4-2.5-.2-4.4-2.6-4.1-5.1.4-2.4 2.8-4 5.3-3.6 1.3.2 2.4.9 3.2 1.9 1.1-.3 2.2-.7 3.2-1.2-1 1-1.9 2-2.9 2.5 1-.1 1.9-.3 2.8-.7-.6.7-1.3 1.4-2 1.9Z"></path></svg>
-                  </a>
+                <div className="flex gap-12 opacity-30 hover:opacity-100 transition-opacity">
+                  {["Github", "Dribbble", "LinkedIn"].map(label => (
+                    <a key={label} href="#" className="text-xl font-bold uppercase tracking-widest hover:text-amber-600 transition-colors">
+                      {label}.
+                    </a>
+                  ))}
                 </div>
-
               </div>
-
-              {/* Doodle decorations */}
-              <motion.div 
-                animate={{ scale: [1, 1.2, 1], rotate: [0, 10, 0] }}
-                transition={{ repeat: Infinity, duration: 4 }}
-                className="absolute -top-12 -left-12 opacity-40 group-hover:opacity-100 transition-opacity"
-              >
-                <CuteFlower className="w-24 h-24" />
-              </motion.div>
             </div>
-            <Tape className="-top-4 right-1/4 w-32 rotate-[-5deg]" />
-          </motion.div>
 
-          <footer className="absolute bottom-10 w-full text-center px-4">
-             <p className="text-3xl font-bold text-amber-800 animate-pulse">Udah ah, pegel ngescroll! ✌️</p>
-          </footer>
+            <div className="mt-32 pt-20 border-t border-amber-900/5 flex flex-col items-center gap-6">
+               <div className="font-hand text-3xl opacity-30 italic">Pongo &copy; 2026</div>
+               <div className="flex items-center gap-2">
+                  <div className="w-10 h-[1px] bg-amber-900/20" />
+                  <Sparkles className="text-amber-400" size={16} />
+                  <div className="w-10 h-[1px] bg-amber-900/20" />
+               </div>
+            </div>
+          </motion.div>
         </section>
       </main>
 
-      {/* Global Scroll Progress or similar can go here */}
+      {/* Background Doodle Elements */}
+      <div className="fixed bottom-10 left-10 opacity-5 -rotate-12 pointer-events-none hidden xl:block">
+        <PenTool size={300} strokeWidth={0.5} />
+      </div>
     </div>
   );
 }
