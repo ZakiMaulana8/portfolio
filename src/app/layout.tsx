@@ -1,21 +1,32 @@
 import type { Metadata } from "next";
-import { Caveat as CaveatFont, Outfit as OutfitFont } from "next/font/google";
+import { 
+  Cormorant_Garamond as SerifFont, 
+  Plus_Jakarta_Sans as SansFont,
+  Mrs_Saint_Delafield as ScriptFont
+} from "next/font/google";
 
 import "./globals.css";
 
-const caveat = CaveatFont({
+const serif = SerifFont({
   subsets: ["latin"],
-  variable: "--font-caveat",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-serif",
 });
 
-const outfit = OutfitFont({
+const sans = SansFont({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  variable: "--font-sans",
+});
+
+const script = ScriptFont({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-script",
 });
 
 export const metadata: Metadata = {
-  title: "My Creative Journal | Portfolio",
-  description: "A creative code portfolio inspired by the 'mogra' scrapbook aesthetic.",
+  title: "PONGO | Design & Creative Code",
+  description: "A premium digital journal of selected works and experiments.",
 };
 
 export default function RootLayout({
@@ -26,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${caveat.variable} ${outfit.variable} antialiased selection:bg-amber-300 bg-amber-50`}
+        className={`${serif.variable} ${sans.variable} ${script.variable} antialiased selection:bg-amber-300 bg-[#fffcf0]`}
       >
         {children}
       </body>
