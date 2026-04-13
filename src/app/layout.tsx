@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { 
   Cormorant_Garamond as SerifFont, 
   Plus_Jakarta_Sans as SansFont,
-  Mrs_Saint_Delafield as ScriptFont
+  Instrument_Serif as AccentFont
 } from "next/font/google";
 
 import "./globals.css";
@@ -18,14 +18,15 @@ const sans = SansFont({
   variable: "--font-sans",
 });
 
-const script = ScriptFont({
+const script = AccentFont({
   subsets: ["latin"],
   weight: ["400"],
+  style: ["italic", "normal"],
   variable: "--font-script",
 });
 
 export const metadata: Metadata = {
-  title: "PONGO | Design & Creative Code",
+  title: "ZAKI | Design & Creative Code",
   description: "A premium digital journal of selected works and experiments.",
 };
 
