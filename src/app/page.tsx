@@ -120,7 +120,7 @@ const ProjectCard = ({ title, desc, img, rotation = 0, index }: { title: string,
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
 
   return (
     <motion.div 
@@ -134,10 +134,10 @@ const ProjectCard = ({ title, desc, img, rotation = 0, index }: { title: string,
       <div className="bg-white p-5 pb-16 border border-black/5 shadow-[20px_20px_60px_rgba(0,0,0,0.03)] group-hover:shadow-[40px_40px_100px_rgba(0,0,0,0.1)] transition-all duration-700 ease-out perspective-1000">
         <div className="aspect-[4/5] bg-paper-dark overflow-hidden relative grayscale group-hover:grayscale-0 transition-all duration-1000">
           <motion.img 
-            style={{ y }}
+            style={{ y, scale: 1.35 }}
             src={img} 
             alt={title} 
-            className="w-full h-full object-cover sepia-filter group-hover:sepia-0 scale-125 group-hover:scale-110 transition-all duration-[2s] ease-out shrink-0" 
+            className="w-full h-full object-cover sepia-filter group-hover:sepia-0 group-hover:scale-[1.2] transition-all duration-[2s] ease-out shrink-0" 
           />
           <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           <div className="absolute top-5 right-5 w-12 h-12 rounded-full border border-white/30 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
@@ -345,14 +345,12 @@ export default function Portfolio() {
     const timer = setTimeout(() => setLoading(false), 2000);
 
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
+      lerp: 0.06,
       wheelMultiplier: 1,
       touchMultiplier: 2,
       infinite: false,
+      syncTouch: true,
+      smoothWheel: true,
     } as any);
 
     function raf(time: number) {
@@ -380,6 +378,11 @@ export default function Portfolio() {
   }, []);
 
   const marqueeText = "CREATIVE CODE • BESPOKE DESIGN • BRAND NARRATIVES • INTERACTIVE SOLUTIONS • EXPERIENCE SYSTEMS • ";
+
+  const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 1000], [0, 300]);
+  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
+  const heroScale = useTransform(scrollY, [0, 500], [1, 0.95]);
 
   return (
     <div 
@@ -438,7 +441,10 @@ export default function Portfolio() {
       <div className="fixed inset-0 pointer-events-none bg-grain opacity-5 z-0" />
 
       {/* Navigation */}
-      <nav className="fixed top-10 left-1/2 -translate-x-1/2 z-[110] w-fit px-4 py-2 bg-paper/30 backdrop-blur-xl rounded-full border border-black/5 shadow-2xl flex items-center gap-1 md:gap-4 transition-transform hover:scale-105 duration-500">
+      <motion.nav 
+        style={{ y: useTransform(scrollY, [0, 50], [0, -100]), opacity: useTransform(scrollY, [0, 50], [1, 0]) }}
+        className="fixed top-10 left-1/2 -translate-x-1/2 z-[110] w-fit px-4 py-2 bg-paper/30 backdrop-blur-xl rounded-full border border-black/5 shadow-2xl flex items-center gap-1 md:gap-4 transition-transform hover:scale-105 duration-500"
+      >
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -464,17 +470,17 @@ export default function Portfolio() {
             </a>
           </Magnetic>
         ))}
-      </nav>
+      </motion.nav>
 
       <main className="relative z-10">
         {/* HERO SECTION */}
         <section id="hero" className="min-h-screen flex flex-col items-center justify-center p-6 pt-32 text-center relative overflow-hidden">
-          <div className="relative z-10 space-y-16">
+          <motion.div style={{ y: heroY, opacity: heroOpacity, scale: heroScale }} className="relative z-10 space-y-16 w-full">
             <motion.div
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-              className="max-w-7xl"
+              className="max-w-7xl mx-auto"
             >
                <div className="inline-flex items-center gap-3 px-6 py-2 bg-accent/10 border border-accent/20 text-accent text-[10px] font-bold uppercase tracking-[0.5em] mb-16 shadow-sm rounded-full backdrop-blur-sm">
                 <Sparkles size={12} />
@@ -529,7 +535,7 @@ export default function Portfolio() {
                </div>
                <Tape className="-top-4 right-1/4 w-32 -rotate-12 bg-paper/10" />
             </motion.div>
-          </div>
+          </motion.div>
 
           <motion.div 
             animate={{ y: [0, 10, 0] }}
