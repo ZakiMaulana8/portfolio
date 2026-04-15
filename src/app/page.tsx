@@ -64,20 +64,61 @@ const Magnetic = ({ children, strength = 0.5 }: { children: React.ReactNode, str
   );
 };
 
-const Reveal = ({ children, delay = 0, className }: { children: React.ReactNode, delay?: number, className?: string }) => {
+const Reveal = ({ children, delay = 0, className, direction = "up" }: { children: React.ReactNode, delay?: number, className?: string, direction?: "up" | "down" | "left" | "right" }) => {
+  const variants = {
+    up: { initial: { y: "100%" }, animate: { y: 0 } },
+    down: { initial: { y: "-100%" }, animate: { y: 0 } },
+    left: { initial: { x: "100%" }, animate: { x: 0 } },
+    right: { initial: { x: "-100%" }, animate: { x: 0 } }
+  };
+
   return (
     <div className={cn("mask-reveal", className)}>
       <motion.div
-        initial={{ y: "100%" }}
-        whileInView={{ y: 0 }}
+        initial={variants[direction].initial}
+        whileInView={variants[direction].animate}
         viewport={{ once: true }}
-        transition={{ duration: 1.2, delay, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 1.4, delay, ease: [0.19, 1, 0.22, 1] }}
       >
         {children}
       </motion.div>
     </div>
   );
 };
+
+const HandDrawnUnderline = ({ delay = 0 }: { delay?: number }) => (
+  <svg className="absolute -bottom-2 left-0 w-full h-4 pointer-events-none overflow-visible" viewBox="0 0 100 10" preserveAspectRatio="none">
+    <motion.path
+      d="M0,5 Q25,2 50,5 T100,5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      initial={{ pathLength: 0 }}
+      whileInView={{ pathLength: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 1.5, delay, ease: "easeInOut" }}
+    />
+  </svg>
+);
+
+const HandDrawnCircle = ({ className, delay = 0 }: { className?: string, delay?: number }) => (
+  <svg className={cn("absolute pointer-events-none overflow-visible", className)} viewBox="0 0 100 100">
+    <motion.circle
+      cx="50"
+      cy="50"
+      r="48"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeDasharray="0 1"
+      initial={{ pathLength: 0, rotate: -90 }}
+      whileInView={{ pathLength: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 2, delay, ease: "easeInOut" }}
+    />
+  </svg>
+);
 
 const CuteFlower = ({ className, rotationBase = 0, delay = 0 }: { className?: string, rotationBase?: number, delay?: number }) => (
   <motion.svg 
@@ -113,48 +154,59 @@ const Tape = ({ className, color = "bg-accent/20" }: { className?: string, color
   />
 );
 
-const ProjectCard = ({ title, desc, img, rotation = 0, index }: { title: string, desc: string, img: string, rotation?: number, index: number }) => {
+const ProjectCard = ({ title, desc, img, rotation = 0, index, onMouseEnter, onMouseLeave }: { title: string, desc: string, img: string, rotation?: number, index: number, onMouseEnter?: () => void, onMouseLeave?: () => void }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
     target: container,
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
+  const y = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
+  const rotate = useTransform(scrollYProgress, [0, 1], [rotation - 2, rotation + 2]);
 
   return (
     <motion.div 
       ref={container}
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 100 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: index * 0.1 }}
-      viewport={{ once: true }}
-      className="relative group cursor-pointer w-full"
+      transition={{ duration: 1.2, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: true, margin: "-100px" }}
+      style={{ rotate }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className="relative group cursor-none w-full"
     >
-      <div className="bg-white p-5 pb-16 border border-black/5 shadow-[20px_20px_60px_rgba(0,0,0,0.03)] group-hover:shadow-[40px_40px_100px_rgba(0,0,0,0.1)] transition-all duration-700 ease-out perspective-1000">
-        <div className="aspect-[4/5] bg-paper-dark overflow-hidden relative grayscale group-hover:grayscale-0 transition-all duration-1000">
+      <div className="bg-white p-6 pb-20 border border-black/5 shadow-[20px_20px_60px_rgba(0,0,0,0.03)] group-hover:shadow-[40px_40px_120px_rgba(0,0,0,0.1)] transition-all duration-1000 ease-[0.16,1,0.3,1] perspective-1000">
+        <div className="aspect-[3/4] md:aspect-[4/5] bg-paper-dark overflow-hidden relative grayscale group-hover:grayscale-0 transition-all duration-1000">
           <motion.img 
-            style={{ y, scale: 1.35 }}
+            style={{ y, scale: 1.4 }}
             src={img} 
             alt={title} 
-            className="w-full h-full object-cover sepia-filter group-hover:sepia-0 group-hover:scale-[1.2] transition-all duration-[2s] ease-out shrink-0" 
+            className="w-full h-full object-cover sepia-filter group-hover:sepia-0 group-hover:scale-[1.3] transition-all duration-[3s] ease-out shrink-0" 
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-          <div className="absolute top-5 right-5 w-12 h-12 rounded-full border border-white/30 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-            <ArrowUpRight size={20} />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+          
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 border border-white/30 rounded-full flex items-center justify-center backdrop-blur-md scale-0 group-hover:scale-100 transition-transform duration-700">
+             <span className="text-white text-[10px] uppercase font-bold tracking-[0.4em]">View</span>
           </div>
         </div>
-        <div className="mt-10 px-2">
-          <div className="flex items-center gap-3 mb-3">
-             <span className="text-[10px] font-sans font-bold uppercase tracking-[0.4em] text-accent">0{index + 1}</span>
-             <div className="h-[1px] w-8 bg-accent/20" />
+        <div className="mt-12 px-2 relative">
+          <div className="flex items-center gap-3 mb-4">
+             <span className="text-[10px] font-sans font-bold uppercase tracking-[0.4em] text-accent">Case—0{index + 1}</span>
+             <div className="h-[1px] flex-1 bg-accent/10" />
           </div>
-          <h3 className="text-4xl font-bold font-serif uppercase tracking-tight mb-3 group-hover:text-accent transition-colors duration-500">{title}</h3>
-          <p className="text-xl opacity-60 font-script leading-snug max-w-[80%]">{desc}</p>
+          <h3 className="text-5xl md:text-6xl font-bold font-serif uppercase tracking-tighter mb-4 group-hover:text-accent transition-colors duration-700 leading-none">
+            {title}
+            {index % 2 === 0 && <span className="text-accent italic font-script lowercase tracking-normal ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-700 text-3xl">studio</span>}
+          </h3>
+          <p className="text-2xl opacity-60 font-script leading-tight max-w-[90%] transform group-hover:translate-x-4 transition-transform duration-700 italic">{desc}</p>
         </div>
       </div>
-      <Tape className="-top-4 left-10 w-28 -rotate-6 opacity-60" />
-      <Tape className="-bottom-2 right-12 w-24 rotate-3 opacity-40 bg-accent/30" />
+      <Tape className="-top-4 left-10 w-32 -rotate-6 opacity-60 bg-accent/10" />
+      <Tape className="-bottom-2 right-12 w-28 rotate-3 opacity-40 bg-accent/40" />
+      <div className="absolute top-10 -right-10 pointer-events-none opacity-0 group-hover:opacity-5 transition-opacity duration-1000">
+         <Sparkles size={120} />
+      </div>
     </motion.div>
   );
 };
@@ -331,6 +383,7 @@ export default function Portfolio() {
   const [currentAboutImg, setCurrentAboutImg] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
+  const [cursorText, setCursorText] = useState("");
   const cursorRef = useRef<HTMLDivElement>(null);
   const followerRef = useRef<HTMLDivElement>(null);
 
@@ -342,12 +395,12 @@ export default function Portfolio() {
 
   useEffect(() => {
     // Simulate loading
-    const timer = setTimeout(() => setLoading(false), 2000);
+    const timer = setTimeout(() => setLoading(false), 2500);
 
     const lenis = new Lenis({
-      lerp: 0.06,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
+      lerp: 0.05,
+      wheelMultiplier: 0.8,
+      touchMultiplier: 1.5,
       infinite: false,
       syncTouch: true,
       smoothWheel: true,
@@ -379,17 +432,35 @@ export default function Portfolio() {
 
   const marqueeText = "CREATIVE CODE • BESPOKE DESIGN • BRAND NARRATIVES • INTERACTIVE SOLUTIONS • EXPERIENCE SYSTEMS • ";
 
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
   const heroY = useTransform(scrollY, [0, 1000], [0, 300]);
   const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
   const heroScale = useTransform(scrollY, [0, 500], [1, 0.95]);
 
+  const backgroundColor = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.4, 0.6, 0.8, 1],
+    ["#fffcf0", "#f2eee0", "#fffcf0", "#fdfcf0", "#1a1510", "#fffcf0"]
+  );
+
   return (
-    <div 
-      className="min-h-screen overflow-x-hidden relative font-serif text-primary selection:bg-accent selection:text-paper"
+    <motion.div 
+      style={{ backgroundColor }}
+      className="min-h-screen overflow-x-hidden relative font-serif text-primary selection:bg-accent selection:text-paper transition-colors duration-1000"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
+      {/* Scroll Progress Bar */}
+      <motion.div 
+        className="fixed top-0 left-0 right-0 h-1 bg-accent z-[203] origin-left"
+        style={{ scaleX }}
+      />
       <AnimatePresence>
         {loading && (
           <motion.div
@@ -423,15 +494,27 @@ export default function Portfolio() {
       <div 
         ref={cursorRef} 
         className={cn(
-          "cursor-follow hidden md:block",
-          !isHovering && "opacity-0"
+          "cursor-follow hidden md:flex items-center justify-center",
+          !isHovering && "opacity-0",
+          cursorText && "w-20 h-20 bg-accent text-paper"
         )} 
-      />
+      >
+        {cursorText && (
+          <motion.span 
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-[10px] font-bold uppercase tracking-widest text-center px-2"
+          >
+            {cursorText}
+          </motion.span>
+        )}
+      </div>
       <div 
         ref={followerRef} 
         className={cn(
           "cursor-follower hidden md:block",
-          !isHovering && "opacity-0"
+          !isHovering && "opacity-0",
+          cursorText && "opacity-0"
         )} 
       />
 
@@ -439,18 +522,19 @@ export default function Portfolio() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.4] bg-noise z-[100]" />
       <div className="fixed inset-0 pointer-events-none bg-pattern z-0 opacity-50" />
       <div className="fixed inset-0 pointer-events-none bg-grain opacity-5 z-0" />
+      <div className="fixed inset-0 pointer-events-none z-[101] shadow-[inset_0_0_150px_rgba(0,0,0,0.1)]" />
 
       {/* Navigation */}
       <motion.nav 
         style={{ y: useTransform(scrollY, [0, 50], [0, -100]), opacity: useTransform(scrollY, [0, 50], [1, 0]) }}
-        className="fixed top-10 left-1/2 -translate-x-1/2 z-[110] w-fit px-4 py-2 bg-paper/30 backdrop-blur-xl rounded-full border border-black/5 shadow-2xl flex items-center gap-1 md:gap-4 transition-transform hover:scale-105 duration-500"
+        className="fixed top-10 left-1/2 -translate-x-1/2 z-[110] w-fit px-2 py-2 bg-paper/20 backdrop-blur-[32px] rounded-full border border-black/5 shadow-[0_20px_50px_rgba(0,0,0,0.1)] flex items-center gap-1 transition-all hover:shadow-[0_40px_100px_rgba(0,0,0,0.15)] hover:bg-paper/40 duration-700"
       >
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="px-4 py-1 border-r border-black/5 mr-2"
+          className="px-6 py-2 border-r border-black/5 mr-1"
         >
-          <span className="text-xl font-bold uppercase tracking-[0.2em] font-serif">Zaki.</span>
+          <span className="text-xl font-bold uppercase tracking-[0.2em] font-serif">Zak.</span>
         </motion.div>
         
         {[
@@ -490,14 +574,18 @@ export default function Portfolio() {
 
               <div className="flex flex-col items-center">
                 <Reveal className="block overflow-visible" delay={0.1}>
-                  <h1 className="text-[14vw] md:text-[10vw] font-bold uppercase tracking-tight leading-[0.75] font-serif text-primary">
+                  <h1 className="text-[14vw] md:text-[11vw] font-bold uppercase tracking-tighter leading-[0.7] font-serif text-primary relative">
                     Sculpting
+                    <HandDrawnCircle className="w-[120%] h-[120%] -top-[10%] -left-[10%] text-accent/20" delay={1.5} />
                   </h1>
                 </Reveal>
-                <Reveal className="block overflow-visible mt-6" delay={0.3}>
-                  <h1 className="text-[14vw] md:text-[10vw] font-bold uppercase tracking-tight leading-[0.75] font-serif flex items-center justify-center gap-[4vw]">
-                    <span className="text-accent italic font-script lowercase tracking-normal -mt-4">digital</span>
-                    Emotions.
+                <Reveal className="block overflow-visible mt-2 md:-mt-4" delay={0.3}>
+                  <h1 className="text-[14vw] md:text-[11vw] font-bold uppercase tracking-tighter leading-[0.7] font-serif flex items-center justify-center gap-[4vw]">
+                    <span className="text-accent italic font-script lowercase tracking-normal md:-mt-8">digital</span>
+                    <span className="relative">
+                      Emotions.
+                      <HandDrawnUnderline delay={2} />
+                    </span>
                   </h1>
                 </Reveal>
               </div>
@@ -517,7 +605,12 @@ export default function Portfolio() {
                initial={{ opacity: 0, scale: 0.8, rotateX: 60, y: 100 }}
                animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
                transition={{ delay: 0.6, duration: 2, ease: [0.16, 1, 0.3, 1] }}
-               className="relative w-full max-w-5xl mx-auto h-[500px] overflow-hidden group shadow-[0_50px_100px_rgba(0,0,0,0.15)] bg-paper-dark perspective-1000"
+               style={{ 
+                 perspective: "1000px",
+                 x: (mousePos.x - (typeof window !== "undefined" ? window.innerWidth / 2 : 0)) * 0.02,
+                 y: (mousePos.y - (typeof window !== "undefined" ? window.innerHeight / 2 : 0)) * 0.02
+               }}
+               className="relative w-full max-w-5xl mx-auto h-[500px] overflow-hidden group shadow-[0_50px_100px_rgba(0,0,0,0.15)] bg-paper-dark"
             >
                <motion.img 
                 animate={{ scale: [1.1, 1] }}
@@ -618,17 +711,30 @@ export default function Portfolio() {
             </div>
             <div className="text-3xl md:text-4xl font-script space-y-10 leading-relaxed text-primary/80">
               <p>
-                I believe that digital interfaces should be as visceral as a physical object. My process is a meticulous distillation of <span className="text-accent underline decoration-accent/20 underline-offset-8">raw chaos</span> into structured beauty.
+                I believe that digital interfaces should be as visceral as a physical object. My process is a meticulous distillation of <span className="text-accent relative group inline-block">
+                  raw chaos
+                  <HandDrawnUnderline delay={0.5} />
+                </span> into structured beauty.
               </p>
               <p>
                 Every pixel I place carries a weight. I don't build tools; I engineer <span className="highlight font-sans text-xs tracking-[0.5em] font-bold uppercase px-4 py-1.5">Atmospheres</span> that resonate with the human pulse.
               </p>
             </div>
-            <div className="pt-10 flex gap-12 opacity-30 hover:opacity-100 transition-all duration-700">
-              <Magnetic strength={0.4}><Heart className="hover:text-red-700 hover:fill-red-700 cursor-pointer transition-colors" size={32} strokeWidth={1} /></Magnetic>
-              <Magnetic strength={0.4}><Camera size={32} strokeWidth={1} className="cursor-pointer" /></Magnetic>
-              <div className="w-16 h-[1px] bg-primary/20 self-center" />
-              <Magnetic strength={0.4}><Fingerprint size={32} strokeWidth={1} className="text-accent cursor-pointer" /></Magnetic>
+            <div className="pt-10 flex items-center gap-12">
+              <div className="flex gap-12 opacity-30 hover:opacity-100 transition-all duration-700">
+                <Magnetic strength={0.4}><Heart className="hover:text-red-700 hover:fill-red-700 cursor-pointer transition-colors" size={32} strokeWidth={1} /></Magnetic>
+                <Magnetic strength={0.4}><Camera size={32} strokeWidth={1} className="cursor-pointer" /></Magnetic>
+                <div className="w-16 h-[1px] bg-primary/20 self-center" />
+                <Magnetic strength={0.4}><Fingerprint size={32} strokeWidth={1} className="text-accent cursor-pointer" /></Magnetic>
+              </div>
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.5 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="ml-auto transform rotate-[-5deg] text-accent font-script text-5xl opacity-40 hover:opacity-100 transition-opacity cursor-default"
+              >
+                Zak.
+              </motion.div>
             </div>
           </motion.div>
         </section>
@@ -656,6 +762,8 @@ export default function Portfolio() {
                 desc="Real-time fluid simulation for reactive web environments." 
                 img="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=1000" 
                 rotation={-1}
+                onMouseEnter={() => setCursorText("EXPLORE")}
+                onMouseLeave={() => setCursorText("")}
               />
               <div className="lg:mt-64">
                 <ProjectCard 
@@ -664,6 +772,8 @@ export default function Portfolio() {
                   desc="A decentralized operating layer for independent storytellers." 
                   img="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000" 
                   rotation={2}
+                  onMouseEnter={() => setCursorText("EXPLORE")}
+                  onMouseLeave={() => setCursorText("")}
                 />
               </div>
               <ProjectCard 
@@ -672,6 +782,8 @@ export default function Portfolio() {
                 desc="Exploring the tactile boundaries of glassmorphism in UI." 
                 img="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000"
                 rotation={-2} 
+                onMouseEnter={() => setCursorText("EXPLORE")}
+                onMouseLeave={() => setCursorText("")}
               />
               <div className="lg:mt-64">
                 <ProjectCard 
@@ -680,6 +792,8 @@ export default function Portfolio() {
                   desc="Algorithmic music visualizer bridging sound and geometry." 
                   img="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000"
                   rotation={1} 
+                  onMouseEnter={() => setCursorText("EXPLORE")}
+                  onMouseLeave={() => setCursorText("")}
                 />
               </div>
             </div>
@@ -846,8 +960,16 @@ export default function Portfolio() {
 
         {/* VIBE SECTION */}
         <section id="vibe" className="py-48 px-6 md:px-20 bg-primary text-paper overflow-hidden relative">
-          <div className="absolute inset-0 opacity-5 blur-[120px] pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-accent rounded-full animate-pulse" />
+          <div className="absolute inset-0 opacity-10 blur-[120px] pointer-events-none">
+            <motion.div 
+              animate={{ 
+                scale: [1, 1.2, 1],
+                rotate: [0, 90, 0],
+                opacity: [0.3, 0.6, 0.3]
+              }}
+              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-accent rounded-full" 
+            />
           </div>
 
           <div className="max-w-8xl mx-auto flex flex-col lg:flex-row gap-32 items-center relative z-10">
@@ -855,7 +977,19 @@ export default function Portfolio() {
               <div className="inline-block px-6 py-2 bg-accent text-paper font-bold uppercase tracking-[0.5em] text-[10px] mb-6 rounded-full font-sans">
                 Now Resonating
               </div>
-              <h2 className="text-8xl md:text-[9vw] font-bold uppercase tracking-tight leading-none mb-10 font-serif">Sound <br /><span className="italic font-script lowercase tracking-normal text-accent">architecture.</span></h2>
+              <h2 className="text-8xl md:text-[9vw] font-bold uppercase tracking-tight leading-none mb-10 font-serif">Sound <br /><span className="italic font-script lowercase tracking-normal text-accent relative inline-block">
+                architecture.
+                <motion.svg className="absolute -bottom-4 left-0 w-full h-4 text-accent/40" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <motion.path 
+                    d="M0,5 Q20,0 40,5 T80,5 T120,5" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="1" 
+                    animate={{ x: [0, -20, 0] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                  />
+                </motion.svg>
+              </span></h2>
               <p className="text-3xl md:text-4xl font-script opacity-40 leading-relaxed max-w-xl mx-auto lg:mx-0">
                 The auditory landscapes that fuel my technical explorations. Music is half the code.
               </p>
@@ -863,6 +997,11 @@ export default function Portfolio() {
             
             <div className="w-full lg:w-[700px]">
               <div className="bg-white/5 backdrop-blur-3xl p-12 border border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.3)] relative rotate-1 group hover:rotate-0 transition-transform duration-700">
+                <div className="absolute -top-10 -left-10 w-20 h-20 bg-accent rounded-full flex items-center justify-center animate-spin-slow">
+                   <div className="w-1 h-1 bg-paper rounded-full" />
+                   <div className="absolute inset-2 border border-paper/20 rounded-full" />
+                   <div className="absolute inset-4 border border-paper/10 rounded-full" />
+                </div>
                 <div className="flex items-center justify-between mb-16 pb-8 border-b border-white/10">
                    <div className="flex items-center gap-6">
                       <div className="w-4 h-4 bg-red-600 rounded-full animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.8)]" />
@@ -969,6 +1108,6 @@ export default function Portfolio() {
       >
         <Fingerprint size={350} strokeWidth={0.2} className="text-accent" />
       </motion.div>
-    </div>
-  );
+      </motion.div>
+    );
 }
