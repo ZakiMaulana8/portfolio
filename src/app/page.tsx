@@ -379,6 +379,7 @@ const ServiceCard = ({ icon: Icon, title, desc, price, rotation = 0 }: { icon: a
 );
 
 export default function Portfolio() {
+  const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentAboutImg, setCurrentAboutImg] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -394,6 +395,7 @@ export default function Portfolio() {
   ];
 
   useEffect(() => {
+    setMounted(true);
     // Simulate loading
     const timer = setTimeout(() => setLoading(false), 2500);
 
@@ -607,8 +609,8 @@ export default function Portfolio() {
                transition={{ delay: 0.6, duration: 2, ease: [0.16, 1, 0.3, 1] }}
                style={{ 
                  perspective: "1000px",
-                 x: (mousePos.x - (typeof window !== "undefined" ? window.innerWidth / 2 : 0)) * 0.02,
-                 y: (mousePos.y - (typeof window !== "undefined" ? window.innerHeight / 2 : 0)) * 0.02
+                 x: mounted ? (mousePos.x - window.innerWidth / 2) * 0.02 : 0,
+                 y: mounted ? (mousePos.y - window.innerHeight / 2) * 0.02 : 0
                }}
                className="relative w-full max-w-5xl mx-auto h-[500px] overflow-hidden group shadow-[0_50px_100px_rgba(0,0,0,0.15)] bg-paper-dark"
             >
