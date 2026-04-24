@@ -92,25 +92,33 @@ const Tape = ({ className, color = "bg-accent/20" }: { className?: string, color
   />
 );
 
-const ProjectCardHorizontal = ({ title, desc, img, index, scrollYProgress }: { title: string, desc: string, img: string, index: number, scrollYProgress: any }) => {
+const ProjectCardHorizontal = ({ title, desc, img, index, scrollYProgress, projectsCount }: { title: string, desc: string, img: string, index: number, scrollYProgress: any, projectsCount: number }) => {
+  // Calculate a more accurate range for when this card is "active"
+  // The first 15% of scroll is the intro, last 10% is the end.
+  // 75% remains for projects.
+  const step = 0.75 / projectsCount;
+  const start = 0.15 + (index * step);
+  const end = start + step;
+  const center = (start + end) / 2;
+
   const isSelected = useTransform(scrollYProgress, 
-    [index * 0.2, (index + 0.5) * 0.2, (index + 1) * 0.2], 
-    [0.9, 1.02, 0.9]
+    [start - step/2, center, end + step/2], 
+    [0.9, 1.05, 0.9]
   );
   
   const cardScale = useSpring(isSelected, { stiffness: 100, damping: 30 });
   const cardRotation = useTransform(scrollYProgress, 
-    [index * 0.2, (index + 1) * 0.2], 
+    [start, end], 
     [1, -1]
   );
 
   return (
     <motion.div 
       style={{ scale: cardScale, rotate: cardRotation }}
-      className="relative group cursor-none w-[35vw] min-w-[450px] flex-shrink-0"
+      className="relative group cursor-none w-[80vw] md:w-[35vw] min-w-[320px] md:min-w-[450px] flex-shrink-0"
       data-cursor="EXPLORE"
     >
-      <div className="bg-white p-8 pb-20 border border-black/5 shadow-high transition-all duration-1000 ease-[0.16,1,0.3,1] group-hover:-translate-y-8 overflow-hidden">
+      <div className="bg-white p-6 md:p-8 pb-16 md:pb-20 border border-black/5 shadow-high transition-all duration-1000 ease-[0.16,1,0.3,1] group-hover:-translate-y-8 overflow-hidden">
         <div className="aspect-[16/10] bg-paper-dark overflow-hidden relative grayscale group-hover:grayscale-0 transition-all duration-1000">
           <motion.img 
             whileHover={{ scale: 1.05 }}
@@ -121,15 +129,15 @@ const ProjectCardHorizontal = ({ title, desc, img, index, scrollYProgress }: { t
           />
           <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
         </div>
-        <div className="mt-12 px-4 relative">
-          <div className="flex items-center gap-4 mb-6">
+        <div className="mt-8 md:mt-12 px-2 md:px-4 relative">
+          <div className="flex items-center gap-4 mb-4 md:mb-6">
              <span className="text-[10px] font-sans font-black uppercase tracking-[0.4em] text-accent">No.0{index + 1}</span>
              <div className="h-[1px] flex-1 bg-accent/10" />
           </div>
-          <h3 className="text-5xl font-bold font-serif uppercase tracking-tight mb-4 group-hover:text-accent transition-colors duration-700 leading-none">
+          <h3 className="text-3xl md:text-5xl font-bold font-serif uppercase tracking-tight mb-4 group-hover:text-accent transition-colors duration-700 leading-none">
             {title}
           </h3>
-          <p className="text-xl font-script opacity-60 leading-relaxed italic pr-12">{desc}</p>
+          <p className="text-lg md:text-xl font-script opacity-60 leading-relaxed italic pr-6 md:pr-12">{desc}</p>
         </div>
       </div>
       <Tape className="-top-4 left-16 w-32 -rotate-2 opacity-60 bg-accent/10" />
@@ -199,6 +207,32 @@ const ServiceCardPremium = ({ icon: Icon, title, desc, price, index }: { icon: a
 
 const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
   const horizontalRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollWidth, setScrollWidth] = useState(0);
+  const [viewportWidth, setViewportWidth] = useState(0);
+
+  useEffect(() => {
+    const calculateWidth = () => {
+      if (scrollRef.current) {
+        setScrollWidth(scrollRef.current.scrollWidth);
+        setViewportWidth(window.innerWidth);
+      }
+    };
+    
+    // Initial calculation
+    calculateWidth();
+    
+    // Recalculate on window resize
+    window.addEventListener("resize", calculateWidth);
+    
+    // Also recalculate after a short delay to ensure assets are loaded
+    const timer = setTimeout(calculateWidth, 1000);
+
+    return () => {
+      window.removeEventListener("resize", calculateWidth);
+      clearTimeout(timer);
+    }
+  }, [projects]);
   
   const { scrollYProgress } = useScroll({
     target: horizontalRef,
@@ -209,27 +243,37 @@ const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
   const smoothVelocity = useSpring(scrollVelocity, { stiffness: 100, damping: 30 });
   
   const skew = useTransform(smoothVelocity, [-1, 1], [-2, 2]);
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
+  
+  // Dynamically calculate x transform based on content width
+  const x = useTransform(
+    scrollYProgress, 
+    [0, 1], 
+    [0, -(scrollWidth - viewportWidth)]
+  );
 
   return (
-    <section id="work" ref={horizontalRef} className="relative h-[500vh] bg-paper-dark/20">
+    <section id="work" ref={horizontalRef} className="relative h-[600vh] bg-paper-dark/20">
       <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
          <div className="absolute top-[10%] left-[5%] opacity-[0.02] select-none pointer-events-none">
             <span className="text-[20vw] font-black uppercase tracking-tighter">WORKS</span>
          </div>
 
-         <motion.div style={{ x, skewX: skew }} className="flex gap-[10vw] px-[10vw] items-center">
-            <div className="w-[35vw] flex-shrink-0 space-y-12">
+         <motion.div 
+            ref={scrollRef}
+            style={{ x, skewX: skew }} 
+            className="flex gap-[5vw] md:gap-[10vw] px-[10vw] items-center w-max"
+         >
+            <div className="w-[80vw] md:w-[35vw] flex-shrink-0 space-y-12">
                <div className="space-y-6">
                   <span className="text-[10px] font-sans font-black uppercase tracking-[0.8em] text-accent">Gallery Archive</span>
-                  <h2 className="text-8xl md:text-[8vw] font-black uppercase tracking-tighter leading-[0.8]">
+                  <h2 className="text-6xl md:text-[8vw] font-black uppercase tracking-tighter leading-[0.8]">
                     The <br /> <span className="text-accent font-script italic lowercase tracking-normal block">exhibition.</span>
                   </h2>
                </div>
-               <p className="text-2xl font-script opacity-50 leading-relaxed italic border-l-4 border-accent/10 pl-10 max-w-xl">
+               <p className="text-xl md:text-2xl font-script opacity-50 leading-relaxed italic border-l-4 border-accent/10 pl-10 max-w-xl">
                   "Selected experiments in the pursuit of technical purity and visceral emotional resonance."
                </p>
-               <div className="flex items-center gap-6 group cursor-pointer" data-cursor="SCROLL">
+               <div className="hidden md:flex items-center gap-6 group cursor-pointer" data-cursor="SCROLL">
                   <div className="w-16 h-16 rounded-full border border-black/10 flex items-center justify-center group-hover:bg-primary group-hover:text-paper transition-all duration-700">
                      <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
                   </div>
@@ -238,12 +282,18 @@ const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
             </div>
             
             {projects.map((proj, idx) => (
-              <ProjectCardHorizontal key={idx} {...proj} index={idx} scrollYProgress={scrollYProgress} />
+              <ProjectCardHorizontal 
+                key={idx} 
+                {...proj} 
+                index={idx} 
+                scrollYProgress={scrollYProgress} 
+                projectsCount={projects.length}
+              />
             ))}
 
-            <div className="w-[30vw] flex-shrink-0 text-center space-y-10">
+            <div className="w-[80vw] md:w-[30vw] flex-shrink-0 text-center space-y-10">
                <span className="text-[9px] font-sans font-black uppercase tracking-[0.6em] opacity-20">End of Volume 04</span>
-               <h3 className="text-6xl font-serif italic text-primary/10">More to come.</h3>
+               <h3 className="text-4xl md:text-6xl font-serif italic text-primary/10">More to come.</h3>
                <button className="px-10 py-5 border border-black/10 hover:bg-primary hover:text-paper transition-all duration-700 font-black uppercase tracking-[0.3em] text-[10px]">
                   Request Cases
                </button>
