@@ -205,34 +205,44 @@ const ServiceCardPremium = ({ icon: Icon, title, desc, price, index }: { icon: a
 
 // --- HORIZONTAL SECTION COMPONENT ---
 
+// --- HORIZONTAL SECTION COMPONENT ---
+
 const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
   const horizontalRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollWidth, setScrollWidth] = useState(0);
   const [viewportWidth, setViewportWidth] = useState(0);
-
+  const [sectionHeight, setSectionHeight] = useState("600vh");
+  
   useEffect(() => {
     const calculateWidth = () => {
       if (scrollRef.current) {
-        setScrollWidth(scrollRef.current.scrollWidth);
-        setViewportWidth(window.innerWidth);
+        const sWidth = scrollRef.current.scrollWidth;
+        const vWidth = window.innerWidth;
+        setScrollWidth(sWidth);
+        setViewportWidth(vWidth);
+        
+        // Calculate a consistent scroll speed: 1.5px of vertical scroll = 1px of horizontal movement
+        const scrollDistance = sWidth - vWidth;
+        if (scrollDistance > 0) {
+          const vDistance = scrollDistance * 1.5;
+          setSectionHeight(`${vDistance + window.innerHeight}px`);
+        } else {
+          setSectionHeight("100vh");
+        }
       }
     };
     
-    // Initial calculation
     calculateWidth();
-    
-    // Recalculate on window resize
+    const resizeObserver = new ResizeObserver(calculateWidth);
+    if (scrollRef.current) resizeObserver.observe(scrollRef.current);
     window.addEventListener("resize", calculateWidth);
     
-    // Also recalculate after a short delay to ensure assets are loaded
-    const timer = setTimeout(calculateWidth, 1000);
-
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener("resize", calculateWidth);
-      clearTimeout(timer);
     }
-  }, [projects]);
+  }, []);
   
   const { scrollYProgress } = useScroll({
     target: horizontalRef,
@@ -242,17 +252,16 @@ const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
   const scrollVelocity = useVelocity(scrollYProgress);
   const smoothVelocity = useSpring(scrollVelocity, { stiffness: 100, damping: 30 });
   
-  const skew = useTransform(smoothVelocity, [-1, 1], [-2, 2]);
+  const skew = useTransform(smoothVelocity, [-0.1, 0.1], [-2, 2]); // More sensitive skew
   
-  // Dynamically calculate x transform based on content width
   const x = useTransform(
     scrollYProgress, 
     [0, 1], 
-    [0, -(scrollWidth - viewportWidth)]
+    [0, scrollWidth > viewportWidth ? -(scrollWidth - viewportWidth) : 0]
   );
 
   return (
-    <section id="work" ref={horizontalRef} className="relative h-[600vh] bg-paper-dark/20">
+    <section id="work" ref={horizontalRef} style={{ height: sectionHeight }} className="relative bg-paper-dark/20">
       <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
          <div className="absolute top-[10%] left-[5%] opacity-[0.02] select-none pointer-events-none">
             <span className="text-[20vw] font-black uppercase tracking-tighter">WORKS</span>
@@ -261,7 +270,7 @@ const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
          <motion.div 
             ref={scrollRef}
             style={{ x, skewX: skew }} 
-            className="flex gap-[5vw] md:gap-[10vw] px-[10vw] items-center w-max"
+            className="flex gap-[5vw] md:gap-[10vw] px-[10vw] items-center w-max will-change-transform"
          >
             <div className="w-[80vw] md:w-[35vw] flex-shrink-0 space-y-12">
                <div className="space-y-6">
@@ -311,23 +320,26 @@ const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
   );
 };
 
+
+// --- STATIC DATA ---
+
+const PROJECTS = [
+  { title: "Aura Engine", desc: "Real-time fluid simulation for reactive web environments.", img: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=1000" },
+  { title: "Nexus Proto", desc: "A decentralized operating layer for independent storytellers.", img: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000" },
+  { title: "Velvet OS", desc: "Exploring the tactile boundaries of glassmorphism in UI.", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000" },
+  { title: "Echo Grid", desc: "Algorithmic music visualizer bridging sound and geometry.", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000" },
+  { title: "Solaris", desc: "Sustainable energy visualization and management suite.", img: "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1000" },
+];
+
 // --- MAIN PORTFOLIO COMPONENT ---
 
 export default function Portfolio() {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [cursorType, setCursorType] = useState<string | null>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const followerRef = useRef<HTMLDivElement>(null);
-
-  const projects = [
-    { title: "Aura Engine", desc: "Real-time fluid simulation for reactive web environments.", img: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=1000" },
-    { title: "Nexus Proto", desc: "A decentralized operating layer for independent storytellers.", img: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000" },
-    { title: "Velvet OS", desc: "Exploring the tactile boundaries of glassmorphism in UI.", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000" },
-    { title: "Echo Grid", desc: "Algorithmic music visualizer bridging sound and geometry.", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000" },
-    { title: "Solaris", desc: "Sustainable energy visualization and management suite.", img: "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1000" },
-  ];
+  const bgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -346,16 +358,19 @@ export default function Portfolio() {
     requestAnimationFrame(raf);
 
     const moveCursor = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-      
       const target = e.target as HTMLElement;
       const cursorData = target.closest("[data-cursor]")?.getAttribute("data-cursor");
       setCursorType(cursorData || null);
 
       if (cursorRef.current && followerRef.current) {
-        // Updated for better alignment
         cursorRef.current.style.transform = `translate3d(${e.clientX - 10}px, ${e.clientY - 10}px, 0)`;
         followerRef.current.style.transform = `translate3d(${e.clientX - 24}px, ${e.clientY - 24}px, 0)`;
+      }
+
+      if (bgRef.current) {
+        const x = (e.clientX - window.innerWidth / 2) * 0.05;
+        const y = (e.clientY - window.innerHeight / 2) * 0.05;
+        bgRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       }
     };
 
@@ -370,7 +385,6 @@ export default function Portfolio() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
   
-  // More subtle background transition
   const backgroundColor = useTransform(
     scrollYProgress,
     [0, 0.4, 0.6, 1],
@@ -388,7 +402,7 @@ export default function Portfolio() {
   return (
     <motion.div 
       style={{ backgroundColor, color: textColor }}
-      className="min-h-screen overflow-x-hidden relative font-serif selection:bg-accent selection:text-paper"
+      className="min-h-screen overflow-x-hidden relative font-serif selection:bg-accent selection:text-paper motion-safe"
     >
       <div 
         ref={cursorRef} 
@@ -417,11 +431,10 @@ export default function Portfolio() {
       
       <div className="fixed inset-0 pointer-events-none opacity-20 z-0">
           <motion.div 
+            ref={bgRef}
             animate={{ 
               scale: [1, 1.1, 1],
               rotate: [0, 45, 0],
-              x: mounted ? (mousePos.x - window.innerWidth / 2) * 0.05 : 0,
-              y: mounted ? (mousePos.y - window.innerHeight / 2) * 0.05 : 0
             }}
             transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
             className="absolute top-1/4 left-1/4 w-[50vw] h-[50vw] bg-accent/5 blur-[120px] rounded-full" 
@@ -556,7 +569,7 @@ export default function Portfolio() {
           </div>
         </div>
 
-        <HorizontalExhibition projects={projects} />
+        <HorizontalExhibition projects={PROJECTS} />
 
         <section id="manifesto" className="py-48 px-8 md:px-24 bg-paper-dark border-y border-black/5 relative overflow-hidden">
            <div className="absolute top-0 right-0 opacity-[0.03] translate-x-1/4 -translate-y-1/4 select-none pointer-events-none">
