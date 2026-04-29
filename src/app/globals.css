@@ -157,6 +157,7 @@ body {
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -170,6 +171,13 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
+}
+
+/* Fix for potential horizontal scroll issues */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
 

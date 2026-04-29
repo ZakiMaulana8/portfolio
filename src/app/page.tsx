@@ -93,55 +93,56 @@ const Tape = ({ className, color = "bg-accent/20" }: { className?: string, color
 );
 
 const ProjectCardHorizontal = ({ title, desc, img, index, scrollYProgress, projectsCount }: { title: string, desc: string, img: string, index: number, scrollYProgress: any, projectsCount: number }) => {
-  // Calculate a more accurate range for when this card is "active"
-  // The first 15% of scroll is the intro, last 10% is the end.
-  // 75% remains for projects.
-  const step = 0.75 / projectsCount;
-  const start = 0.15 + (index * step);
-  const end = start + step;
-  const center = (start + end) / 2;
+  // Simpler range calculation
+  const step = 1 / projectsCount;
+  const start = index * step;
+  const end = (index + 1) * step;
 
-  const isSelected = useTransform(scrollYProgress, 
-    [start - step/2, center, end + step/2], 
-    [0.9, 1.05, 0.9]
-  );
+  // Clamped parallax for the image
+  const imageX = useTransform(scrollYProgress, [start, end], ["-8%", "8%"], { clamp: true });
   
-  const cardScale = useSpring(isSelected, { stiffness: 100, damping: 30 });
-  const cardRotation = useTransform(scrollYProgress, 
-    [start, end], 
-    [1, -1]
+  // Subtle scaling effect that won't hide the card
+  const scale = useTransform(scrollYProgress, 
+    [start - step * 0.5, start + step * 0.5, end + step * 0.5], 
+    [0.95, 1, 0.95],
+    { clamp: true }
   );
 
   return (
     <motion.div 
-      style={{ scale: cardScale, rotate: cardRotation }}
-      className="relative group cursor-none w-[80vw] md:w-[35vw] min-w-[320px] md:min-w-[450px] flex-shrink-0"
+      style={{ scale }}
+      className="relative group w-[80vw] md:w-[45vw] min-w-[300px] md:min-w-[550px] flex-shrink-0"
       data-cursor="EXPLORE"
     >
-      <div className="bg-white p-6 md:p-8 pb-16 md:pb-20 border border-black/5 shadow-high transition-all duration-1000 ease-[0.16,1,0.3,1] group-hover:-translate-y-8 overflow-hidden">
-        <div className="aspect-[16/10] bg-paper-dark overflow-hidden relative grayscale group-hover:grayscale-0 transition-all duration-1000">
+      <div className="bg-white p-6 md:p-10 pb-16 md:pb-24 border border-black/5 shadow-high transition-all duration-700 ease-out group-hover:-translate-y-2 overflow-hidden">
+        <div className="aspect-[16/10] bg-paper-dark overflow-hidden relative">
           <motion.img 
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 2, ease: "easeOut" }}
+            style={{ x: imageX, scale: 1.15 }}
             src={img} 
             alt={title} 
-            className="w-full h-full object-cover sepia-filter group-hover:sepia-0 transition-all duration-[4s]" 
+            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 ease-out" 
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-        </div>
-        <div className="mt-8 md:mt-12 px-2 md:px-4 relative">
-          <div className="flex items-center gap-4 mb-4 md:mb-6">
-             <span className="text-[10px] font-sans font-black uppercase tracking-[0.4em] text-accent">No.0{index + 1}</span>
-             <div className="h-[1px] flex-1 bg-accent/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+          
+          <div className="absolute top-4 right-4 flex flex-col items-end mix-blend-difference text-white">
+             <span className="text-[8px] font-black uppercase tracking-[0.3em]">Archive</span>
+             <span className="text-3xl font-serif font-black italic tracking-tighter">0{index + 1}</span>
           </div>
-          <h3 className="text-3xl md:text-5xl font-bold font-serif uppercase tracking-tight mb-4 group-hover:text-accent transition-colors duration-700 leading-none">
+        </div>
+        
+        <div className="mt-10 md:mt-14 px-2 relative">
+          <div className="flex items-center gap-4 mb-4">
+             <div className="h-[1px] w-8 bg-accent" />
+             <span className="text-[10px] font-sans font-black uppercase tracking-[0.4em] text-accent">Selected Works</span>
+          </div>
+          <h3 className="text-3xl md:text-6xl font-bold font-serif uppercase tracking-tight mb-4 group-hover:text-accent transition-colors duration-500 leading-none">
             {title}
           </h3>
-          <p className="text-lg md:text-xl font-script opacity-60 leading-relaxed italic pr-6 md:pr-12">{desc}</p>
+          <p className="text-lg md:text-2xl font-script opacity-60 leading-tight italic pr-8 max-w-lg">{desc}</p>
         </div>
       </div>
-      <Tape className="-top-4 left-16 w-32 -rotate-2 opacity-60 bg-accent/10" />
-      <Tape className="-bottom-4 right-16 w-24 rotate-3 opacity-40 bg-accent/20" />
+      <Tape className="-top-4 left-10 w-32 -rotate-2 opacity-30 bg-accent/10" />
+      <Tape className="-bottom-4 right-10 w-24 rotate-1 opacity-20 bg-accent/20" />
     </motion.div>
   );
 };
@@ -212,7 +213,7 @@ const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollWidth, setScrollWidth] = useState(0);
   const [viewportWidth, setViewportWidth] = useState(0);
-  const [sectionHeight, setSectionHeight] = useState("600vh");
+  const [sectionHeight, setSectionHeight] = useState("300vh");
   
   useEffect(() => {
     const calculateWidth = () => {
@@ -222,7 +223,7 @@ const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
         setScrollWidth(sWidth);
         setViewportWidth(vWidth);
         
-        // Calculate a consistent scroll speed: 1.5px of vertical scroll = 1px of horizontal movement
+        // Multiplier for scroll distance
         const scrollDistance = sWidth - vWidth;
         if (scrollDistance > 0) {
           const vDistance = scrollDistance * 1.5;
@@ -233,57 +234,65 @@ const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
       }
     };
     
+    // Immediate calculation + delay to handle dynamic content
     calculateWidth();
+    const timer = setTimeout(calculateWidth, 500);
     const resizeObserver = new ResizeObserver(calculateWidth);
     if (scrollRef.current) resizeObserver.observe(scrollRef.current);
     window.addEventListener("resize", calculateWidth);
     
     return () => {
+      clearTimeout(timer);
       resizeObserver.disconnect();
       window.removeEventListener("resize", calculateWidth);
     }
-  }, []);
+  }, [projects]); // Recalculate if projects change
   
   const { scrollYProgress } = useScroll({
     target: horizontalRef,
     offset: ["start start", "end end"]
   });
 
-  const scrollVelocity = useVelocity(scrollYProgress);
-  const smoothVelocity = useSpring(scrollVelocity, { stiffness: 100, damping: 30 });
-  
-  const skew = useTransform(smoothVelocity, [-0.1, 0.1], [-2, 2]); // More sensitive skew
-  
+  // Direct horizontal mapping (removed smoothX to ensure stability)
   const x = useTransform(
     scrollYProgress, 
     [0, 1], 
     [0, scrollWidth > viewportWidth ? -(scrollWidth - viewportWidth) : 0]
   );
+  
+  // Subtle parallax for background text
+  const bgX = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"], { clamp: true });
 
   return (
-    <section id="work" ref={horizontalRef} style={{ height: sectionHeight }} className="relative bg-paper-dark/20">
+    <section id="work" ref={horizontalRef} style={{ height: sectionHeight }} className="relative bg-paper-dark/5">
       <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
-         <div className="absolute top-[10%] left-[5%] opacity-[0.02] select-none pointer-events-none">
-            <span className="text-[20vw] font-black uppercase tracking-tighter">WORKS</span>
-         </div>
+         <motion.div 
+            style={{ x: bgX }}
+            className="absolute top-[20%] left-0 opacity-[0.02] select-none pointer-events-none whitespace-nowrap"
+         >
+            <span className="text-[20vw] font-black uppercase tracking-tighter">WORKS EXHIBITION ARCHIVE</span>
+         </motion.div>
 
          <motion.div 
             ref={scrollRef}
-            style={{ x, skewX: skew }} 
-            className="flex gap-[5vw] md:gap-[10vw] px-[10vw] items-center w-max will-change-transform"
+            style={{ x }} 
+            className="flex gap-[10vw] md:gap-[12vw] px-[10vw] md:px-[15vw] items-center w-max will-change-transform"
          >
             <div className="w-[80vw] md:w-[35vw] flex-shrink-0 space-y-12">
                <div className="space-y-6">
-                  <span className="text-[10px] font-sans font-black uppercase tracking-[0.8em] text-accent">Gallery Archive</span>
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-[1px] bg-accent" />
+                    <span className="text-[10px] font-sans font-black uppercase tracking-[0.6em] text-accent">Project Archive</span>
+                  </div>
                   <h2 className="text-6xl md:text-[8vw] font-black uppercase tracking-tighter leading-[0.8]">
-                    The <br /> <span className="text-accent font-script italic lowercase tracking-normal block">exhibition.</span>
+                    Selected <br /> <span className="text-accent font-script italic lowercase tracking-normal block">works.</span>
                   </h2>
                </div>
-               <p className="text-xl md:text-2xl font-script opacity-50 leading-relaxed italic border-l-4 border-accent/10 pl-10 max-w-xl">
-                  "Selected experiments in the pursuit of technical purity and visceral emotional resonance."
+               <p className="text-xl md:text-2xl font-script opacity-50 leading-tight italic border-l-4 border-accent/10 pl-10 max-w-xl">
+                  "Selected experiments in the pursuit of technical purity and visceral resonance."
                </p>
                <div className="hidden md:flex items-center gap-6 group cursor-pointer" data-cursor="SCROLL">
-                  <div className="w-16 h-16 rounded-full border border-black/10 flex items-center justify-center group-hover:bg-primary group-hover:text-paper transition-all duration-700">
+                  <div className="w-16 h-16 rounded-full border border-black/10 flex items-center justify-center group-hover:bg-primary group-hover:text-paper transition-all duration-700 shadow-high bg-white/20">
                      <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
                   </div>
                   <span className="text-[10px] font-bold uppercase tracking-[0.4em] opacity-40">Scroll to explore</span>
@@ -300,8 +309,11 @@ const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
               />
             ))}
 
-            <div className="w-[80vw] md:w-[30vw] flex-shrink-0 text-center space-y-10">
-               <span className="text-[9px] font-sans font-black uppercase tracking-[0.6em] opacity-20">End of Volume 04</span>
+            <div className="w-[80vw] md:w-[35vw] flex-shrink-0 text-center space-y-12">
+               <div className="flex flex-col items-center gap-4">
+                 <span className="text-[10px] font-sans font-black uppercase tracking-[0.6em] opacity-20">Volume 04</span>
+                 <div className="w-[1px] h-20 bg-black/5" />
+               </div>
                <h3 className="text-4xl md:text-6xl font-serif italic text-primary/10">More to come.</h3>
                <button className="px-10 py-5 border border-black/10 hover:bg-primary hover:text-paper transition-all duration-700 font-black uppercase tracking-[0.3em] text-[10px]">
                   Request Cases
@@ -309,7 +321,7 @@ const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
             </div>
          </motion.div>
 
-         <div className="absolute bottom-[10%] left-0 w-full h-px bg-black/[0.05]">
+         <div className="absolute bottom-[10%] left-[10%] right-[10%] h-[1px] bg-black/5">
             <motion.div 
                style={{ scaleX: scrollYProgress }}
                className="h-full bg-accent origin-left w-full"
