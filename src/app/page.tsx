@@ -3,10 +3,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView, useVelocity } from "framer-motion";
 import Lenis from "lenis";
-import { 
-  Sparkles, 
-  PenTool, 
-  ChevronDown, 
+import {
+  Sparkles,
+  PenTool,
+  ChevronDown,
   Camera,
   Globe,
   Code,
@@ -35,10 +35,10 @@ const SplitText = ({ text, delay = 0, className, once = true }: { text: string, 
             initial={{ y: "100%" }}
             whileInView={{ y: 0 }}
             viewport={{ once }}
-            transition={{ 
-              duration: 1.2, 
-              delay: delay + (i * 0.05), 
-              ease: [0.22, 1, 0.36, 1] 
+            transition={{
+              duration: 1.2,
+              delay: delay + (i * 0.05),
+              ease: [0.22, 1, 0.36, 1]
             }}
             className="inline-block"
           >
@@ -83,12 +83,12 @@ const Magnetic = ({ children, strength = 0.5, className, text }: { children: Rea
 };
 
 const Tape = ({ className, color = "bg-accent/20" }: { className?: string, color?: string }) => (
-  <div 
+  <div
     className={cn(
       "absolute h-10 backdrop-blur-[1px] border border-black/5 shadow-sm z-20 tape",
       color,
       className
-    )} 
+    )}
   />
 );
 
@@ -100,40 +100,40 @@ const ProjectCardHorizontal = ({ title, desc, img, index, scrollYProgress, proje
 
   // Clamped parallax for the image
   const imageX = useTransform(scrollYProgress, [start, end], ["-8%", "8%"], { clamp: true });
-  
+
   // Subtle scaling effect that won't hide the card
-  const scale = useTransform(scrollYProgress, 
-    [start - step * 0.5, start + step * 0.5, end + step * 0.5], 
+  const scale = useTransform(scrollYProgress,
+    [start - step * 0.5, start + step * 0.5, end + step * 0.5],
     [0.95, 1, 0.95],
     { clamp: true }
   );
 
   return (
-    <motion.div 
+    <motion.div
       style={{ scale }}
       className="relative group w-[80vw] md:w-[45vw] min-w-[300px] md:min-w-[550px] flex-shrink-0"
       data-cursor="EXPLORE"
     >
       <div className="bg-white p-6 md:p-10 pb-16 md:pb-24 border border-black/5 shadow-high transition-all duration-700 ease-out group-hover:-translate-y-2 overflow-hidden">
         <div className="aspect-[16/10] bg-paper-dark overflow-hidden relative">
-          <motion.img 
+          <motion.img
             style={{ x: imageX, scale: 1.15 }}
-            src={img} 
-            alt={title} 
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 ease-out" 
+            src={img}
+            alt={title}
+            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 ease-out"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-          
+
           <div className="absolute top-4 right-4 flex flex-col items-end mix-blend-difference text-white">
-             <span className="text-[8px] font-black uppercase tracking-[0.3em]">Archive</span>
-             <span className="text-3xl font-serif font-black italic tracking-tighter">0{index + 1}</span>
+            <span className="text-[8px] font-black uppercase tracking-[0.3em]">Archive</span>
+            <span className="text-3xl font-serif font-black italic tracking-tighter">0{index + 1}</span>
           </div>
         </div>
-        
+
         <div className="mt-10 md:mt-14 px-2 relative">
           <div className="flex items-center gap-4 mb-4">
-             <div className="h-[1px] w-8 bg-accent" />
-             <span className="text-[10px] font-sans font-black uppercase tracking-[0.4em] text-accent">Selected Works</span>
+            <div className="h-[1px] w-8 bg-accent" />
+            <span className="text-[10px] font-sans font-black uppercase tracking-[0.4em] text-accent">Selected Works</span>
           </div>
           <h3 className="text-3xl md:text-6xl font-bold font-serif uppercase tracking-tight mb-4 group-hover:text-accent transition-colors duration-500 leading-none">
             {title}
@@ -152,14 +152,14 @@ const FloatingPaper = ({ children, className, rotation = 0, delay = 0 }: { child
     initial={{ y: 50, opacity: 0, rotate: rotation - 5 }}
     whileInView={{ y: 0, opacity: 1, rotate: rotation }}
     viewport={{ once: true }}
-    animate={{ 
+    animate={{
       y: [0, -20, 0],
       rotate: [rotation, rotation + 3, rotation]
     }}
-    transition={{ 
-      duration: 8, 
+    transition={{
+      duration: 8,
       delay,
-      repeat: Infinity, 
+      repeat: Infinity,
       ease: "easeInOut",
       y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
     }}
@@ -204,129 +204,97 @@ const ServiceCardPremium = ({ icon: Icon, title, desc, price, index }: { icon: a
   );
 };
 
-// --- HORIZONTAL SECTION COMPONENT ---
+// --- VERTICAL SECTION COMPONENT ---
 
-// --- HORIZONTAL SECTION COMPONENT ---
-
-const HorizontalExhibition = ({ projects }: { projects: any[] }) => {
-  const horizontalRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [scrollWidth, setScrollWidth] = useState(0);
-  const [viewportWidth, setViewportWidth] = useState(0);
-  const [sectionHeight, setSectionHeight] = useState("300vh");
-  
-  useEffect(() => {
-    const calculateWidth = () => {
-      if (scrollRef.current) {
-        const sWidth = scrollRef.current.scrollWidth;
-        const vWidth = window.innerWidth;
-        setScrollWidth(sWidth);
-        setViewportWidth(vWidth);
-        
-        // Multiplier for scroll distance
-        const scrollDistance = sWidth - vWidth;
-        if (scrollDistance > 0) {
-          const vDistance = scrollDistance * 1.5;
-          setSectionHeight(`${vDistance + window.innerHeight}px`);
-        } else {
-          setSectionHeight("100vh");
-        }
-      }
-    };
-    
-    // Immediate calculation + delay to handle dynamic content
-    calculateWidth();
-    const timer = setTimeout(calculateWidth, 500);
-    const resizeObserver = new ResizeObserver(calculateWidth);
-    if (scrollRef.current) resizeObserver.observe(scrollRef.current);
-    window.addEventListener("resize", calculateWidth);
-    
-    return () => {
-      clearTimeout(timer);
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", calculateWidth);
-    }
-  }, [projects]); // Recalculate if projects change
-  
-  const { scrollYProgress } = useScroll({
-    target: horizontalRef,
-    offset: ["start start", "end end"]
-  });
-
-  // Direct horizontal mapping (removed smoothX to ensure stability)
-  const x = useTransform(
-    scrollYProgress, 
-    [0, 1], 
-    [0, scrollWidth > viewportWidth ? -(scrollWidth - viewportWidth) : 0]
-  );
-  
-  // Subtle parallax for background text
-  const bgX = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"], { clamp: true });
+const ProjectCardVertical = ({ title, desc, img, index }: { title: string, desc: string, img: string, index: number }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
-    <section id="work" ref={horizontalRef} style={{ height: sectionHeight }} className="relative bg-paper-dark/5">
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
-         <motion.div 
-            style={{ x: bgX }}
-            className="absolute top-[20%] left-0 opacity-[0.02] select-none pointer-events-none whitespace-nowrap"
-         >
-            <span className="text-[20vw] font-black uppercase tracking-tighter">WORKS EXHIBITION ARCHIVE</span>
-         </motion.div>
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 100 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+      className={cn(
+        "flex flex-col md:flex-row items-center gap-12 md:gap-32 mb-32 md:mb-64 relative",
+        index % 2 !== 0 && "md:flex-row-reverse"
+      )}
+    >
+      <div className="w-full md:w-[60%] group relative">
+        <div className="aspect-[16/10] overflow-hidden relative border border-black/5 shadow-high bg-paper-dark">
+          <motion.img 
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+            src={img} 
+            alt={title} 
+            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+          />
+          <div className="absolute top-8 right-8 mix-blend-difference text-white z-10">
+            <span className="text-6xl font-serif italic opacity-40">0{index + 1}</span>
+          </div>
+        </div>
+        <Tape className="-top-6 left-10 w-40 -rotate-3 opacity-30 bg-accent/20 z-20" />
+      </div>
+      
+      <div className="w-full md:w-[40%] space-y-10 relative z-10">
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-[1px] bg-accent" />
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent">Artifact {index + 1}</span>
+          </div>
+          <h3 className="text-5xl md:text-[6vw] font-black uppercase tracking-tighter leading-[0.8] font-serif italic">
+            {title}
+          </h3>
+        </div>
+        <p className="text-2xl md:text-3xl font-script opacity-60 leading-tight italic border-l-4 border-accent/10 pl-10">
+          "{desc}"
+        </p>
+        <div className="pt-8">
+           <Magnetic strength={0.3} text="VIEW PROJECT">
+              <button className="px-10 py-5 border border-black/10 hover:bg-primary hover:text-white transition-all duration-700 font-black uppercase tracking-[0.4em] text-[9px]">
+                 Explore Archive
+              </button>
+           </Magnetic>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
-         <motion.div 
-            ref={scrollRef}
-            style={{ x }} 
-            className="flex gap-[10vw] md:gap-[12vw] px-[10vw] md:px-[15vw] items-center w-max will-change-transform"
-         >
-            <div className="w-[80vw] md:w-[35vw] flex-shrink-0 space-y-12">
-               <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-[1px] bg-accent" />
-                    <span className="text-[10px] font-sans font-black uppercase tracking-[0.6em] text-accent">Project Archive</span>
-                  </div>
-                  <h2 className="text-6xl md:text-[8vw] font-black uppercase tracking-tighter leading-[0.8]">
-                    Selected <br /> <span className="text-accent font-script italic lowercase tracking-normal block">works.</span>
-                  </h2>
-               </div>
-               <p className="text-xl md:text-2xl font-script opacity-50 leading-tight italic border-l-4 border-accent/10 pl-10 max-w-xl">
-                  "Selected experiments in the pursuit of technical purity and visceral resonance."
-               </p>
-               <div className="hidden md:flex items-center gap-6 group cursor-pointer" data-cursor="SCROLL">
-                  <div className="w-16 h-16 rounded-full border border-black/10 flex items-center justify-center group-hover:bg-primary group-hover:text-paper transition-all duration-700 shadow-high bg-white/20">
-                     <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
-                  </div>
-                  <span className="text-[10px] font-bold uppercase tracking-[0.4em] opacity-40">Scroll to explore</span>
-               </div>
-            </div>
-            
-            {projects.map((proj, idx) => (
-              <ProjectCardHorizontal 
-                key={idx} 
-                {...proj} 
-                index={idx} 
-                scrollYProgress={scrollYProgress} 
-                projectsCount={projects.length}
-              />
-            ))}
+const VerticalExhibition = ({ projects }: { projects: any[] }) => {
+  return (
+    <section id="work" className="py-64 px-8 md:px-24 bg-white relative overflow-hidden">
+      <div className="absolute top-0 right-0 opacity-[0.02] select-none pointer-events-none translate-x-1/4">
+         <span className="text-[30vw] font-black uppercase tracking-tighter leading-none">ARCHIVE</span>
+      </div>
 
-            <div className="w-[80vw] md:w-[35vw] flex-shrink-0 text-center space-y-12">
-               <div className="flex flex-col items-center gap-4">
-                 <span className="text-[10px] font-sans font-black uppercase tracking-[0.6em] opacity-20">Volume 04</span>
-                 <div className="w-[1px] h-20 bg-black/5" />
-               </div>
-               <h3 className="text-4xl md:text-6xl font-serif italic text-primary/10">More to come.</h3>
-               <button className="px-10 py-5 border border-black/10 hover:bg-primary hover:text-paper transition-all duration-700 font-black uppercase tracking-[0.3em] text-[10px]">
-                  Request Cases
-               </button>
-            </div>
-         </motion.div>
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-48 md:mb-72 relative">
+           <div className="flex items-center gap-8 mb-12">
+              <div className="w-24 h-[2px] bg-accent" />
+              <span className="text-[12px] font-black uppercase tracking-[1em] text-accent">Works Archive</span>
+           </div>
+           <h2 className="text-[12vw] font-black uppercase tracking-tighter leading-[0.75] font-serif">
+              Curated <br /> <span className="text-accent italic font-script lowercase tracking-normal">artifacts.</span>
+           </h2>
+        </div>
+        
+        <div className="relative">
+          {projects.map((proj, idx) => (
+            <ProjectCardVertical key={idx} {...proj} index={idx} />
+          ))}
+        </div>
 
-         <div className="absolute bottom-[10%] left-[10%] right-[10%] h-[1px] bg-black/5">
-            <motion.div 
-               style={{ scaleX: scrollYProgress }}
-               className="h-full bg-accent origin-left w-full"
-            />
-         </div>
+        <div className="mt-32 md:mt-64 flex flex-col items-center text-center space-y-12 border-t border-black/5 pt-32">
+           <Sparkles className="text-accent/20 animate-pulse" size={80} />
+           <h3 className="text-4xl md:text-6xl font-serif italic opacity-20 uppercase tracking-tighter">New artifacts in distillation.</h3>
+           <Magnetic strength={0.4} text="COLLABORATE">
+              <button className="px-16 py-8 bg-primary text-paper font-black uppercase tracking-[0.6em] text-[10px] hover:bg-accent transition-all duration-1000">
+                 Request Access
+              </button>
+           </Magnetic>
+        </div>
       </div>
     </section>
   );
@@ -396,7 +364,7 @@ export default function Portfolio() {
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-  
+
   const backgroundColor = useTransform(
     scrollYProgress,
     [0, 0.4, 0.6, 1],
@@ -412,20 +380,20 @@ export default function Portfolio() {
   if (!mounted) return null;
 
   return (
-    <motion.div 
+    <motion.div
       style={{ backgroundColor, color: textColor }}
       className="min-h-screen overflow-x-hidden relative font-serif selection:bg-accent selection:text-paper motion-safe"
     >
-      <div 
-        ref={cursorRef} 
+      <div
+        ref={cursorRef}
         className={cn(
           "cursor-follow hidden md:flex items-center justify-center",
           cursorType && "scale-[4] bg-white mix-blend-difference"
-        )} 
+        )}
       >
         <AnimatePresence>
           {cursorType && (
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0 }}
@@ -440,17 +408,17 @@ export default function Portfolio() {
 
       <div className="bg-noise" />
       <div className="fixed inset-0 pointer-events-none bg-pattern z-0 opacity-40" />
-      
+
       <div className="fixed inset-0 pointer-events-none opacity-20 z-0">
-          <motion.div 
-            ref={bgRef}
-            animate={{ 
-              scale: [1, 1.1, 1],
-              rotate: [0, 45, 0],
-            }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/4 left-1/4 w-[50vw] h-[50vw] bg-accent/5 blur-[120px] rounded-full" 
-          />
+        <motion.div
+          ref={bgRef}
+          animate={{
+            scale: [1, 1.1, 1],
+            rotate: [0, 45, 0],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute top-1/4 left-1/4 w-[50vw] h-[50vw] bg-accent/5 blur-[120px] rounded-full"
+        />
       </div>
 
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-accent z-[1000] origin-left" style={{ scaleX }} />
@@ -471,7 +439,7 @@ export default function Portfolio() {
                 className="text-7xl md:text-[8vw] font-serif font-black uppercase tracking-[calc(-0.06em)] flex items-center gap-8"
               >
                 Archive
-                <motion.div 
+                <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                 >
@@ -479,7 +447,7 @@ export default function Portfolio() {
                 </motion.div>
               </motion.div>
               <div className="absolute bottom-2 left-0 w-full h-[2px] bg-black/5">
-                <motion.div 
+                <motion.div
                   initial={{ x: "-100%" }}
                   animate={{ x: "100%" }}
                   transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
@@ -494,23 +462,23 @@ export default function Portfolio() {
       <nav className="fixed top-0 left-0 w-full z-[100] p-10 flex justify-between items-start pointer-events-none">
         <div className="pointer-events-auto">
           <Magnetic text="ZAK DESIGN">
-             <div className="group cursor-pointer">
-                <span className="text-3xl font-black uppercase tracking-tighter block leading-none">Zak Studio™</span>
-                <span className="text-[9px] font-sans font-black uppercase tracking-[0.6em] opacity-40 group-hover:opacity-100 transition-opacity">Visual Archive</span>
-             </div>
+            <div className="group cursor-pointer">
+              <span className="text-3xl font-black uppercase tracking-tighter block leading-none">Zak Studio™</span>
+              <span className="text-[9px] font-sans font-black uppercase tracking-[0.6em] opacity-40 group-hover:opacity-100 transition-opacity">Visual Archive</span>
+            </div>
           </Magnetic>
         </div>
         <div className="flex items-center gap-10 pointer-events-auto">
-           {["Works", "Manifesto", "Connect"].map((item, idx) => (
-             <Magnetic key={item} strength={0.3} text={item.toUpperCase()}>
-               <a href={`#${item.toLowerCase()}`} className="group relative py-2 overflow-hidden block">
-                 <span className="text-lg font-serif font-bold uppercase tracking-tight group-hover:text-accent transition-all duration-500">
-                    {item}
-                 </span>
-                 <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-accent group-hover:w-full transition-all duration-500" />
-               </a>
-             </Magnetic>
-           ))}
+          {["Works", "Manifesto", "Connect"].map((item, idx) => (
+            <Magnetic key={item} strength={0.3} text={item.toUpperCase()}>
+              <a href={`#${item.toLowerCase()}`} className="group relative py-2 overflow-hidden block">
+                <span className="text-lg font-serif font-bold uppercase tracking-tight group-hover:text-accent transition-all duration-500">
+                  {item}
+                </span>
+                <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-accent group-hover:w-full transition-all duration-500" />
+              </a>
+            </Magnetic>
+          ))}
         </div>
       </nav>
 
@@ -523,14 +491,14 @@ export default function Portfolio() {
               transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="inline-flex items-center gap-8 px-8 py-3 border border-black/10 bg-white/40 backdrop-blur-3xl rounded-full text-[10px] font-black uppercase tracking-[0.6em] mb-20 shadow-high group hover:bg-primary hover:text-paper transition-all duration-700 cursor-none" data-cursor="OPEN">
-                <motion.div 
+                <motion.div
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="w-2 h-2 bg-accent rounded-full" 
+                  className="w-2 h-2 bg-accent rounded-full"
                 />
                 <span>Engineering Experience for 2026</span>
               </div>
-              
+
               <h1 className="text-[12vw] font-black uppercase leading-[0.75] tracking-[calc(-0.06em)] font-serif mb-16">
                 <SplitText text="Bespoke" /> <br />
                 <span className="text-accent italic font-script lowercase tracking-normal block transform -rotate-1">
@@ -543,11 +511,11 @@ export default function Portfolio() {
                   "Distilling complex engineering into curated moments of presence. We design for sensory memory."
                 </p>
                 <div className="flex flex-col items-center gap-6">
-                   <Magnetic strength={0.4} text="ENTER">
-                     <div className="w-24 h-24 rounded-full border border-black/10 flex items-center justify-center group hover:bg-accent hover:text-paper hover:border-transparent transition-all duration-1000 cursor-pointer shadow-high bg-white/20 backdrop-blur-md">
-                        <ChevronDown className="group-hover:translate-y-2 transition-transform duration-700" size={32} strokeWidth={1} />
-                     </div>
-                   </Magnetic>
+                  <Magnetic strength={0.4} text="ENTER">
+                    <div className="w-24 h-24 rounded-full border border-black/10 flex items-center justify-center group hover:bg-accent hover:text-paper hover:border-transparent transition-all duration-1000 cursor-pointer shadow-high bg-white/20 backdrop-blur-md">
+                      <ChevronDown className="group-hover:translate-y-2 transition-transform duration-700" size={32} strokeWidth={1} />
+                    </div>
+                  </Magnetic>
                 </div>
               </div>
             </motion.div>
@@ -555,16 +523,16 @@ export default function Portfolio() {
 
           <div className="hidden xl:block opacity-40">
             <FloatingPaper className="absolute top-[20%] left-[8%] w-64 h-[400px] -rotate-6" rotation={-6}>
-               <div className="w-full h-full bg-paper-dark grayscale border border-black/5 overflow-hidden group relative">
-                  <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[4s]" />
-               </div>
-               <Tape className="-top-6 left-1/2 -translate-x-1/2 w-40 bg-accent/20" />
+              <div className="w-full h-full bg-paper-dark grayscale border border-black/5 overflow-hidden group relative">
+                <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[4s]" />
+              </div>
+              <Tape className="-top-6 left-1/2 -translate-x-1/2 w-40 bg-accent/20" />
             </FloatingPaper>
 
             <FloatingPaper className="absolute bottom-[10%] right-[10%] w-60 h-80 rotate-6" rotation={6} delay={1}>
-               <div className="w-full h-full grayscale border border-black/5 overflow-hidden group relative">
-                  <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=600" className="w-full h-full object-cover group-hover:grayscale-0 transition-all duration-700" />
-               </div>
+              <div className="w-full h-full grayscale border border-black/5 overflow-hidden group relative">
+                <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=600" className="w-full h-full object-cover group-hover:grayscale-0 transition-all duration-700" />
+              </div>
             </FloatingPaper>
           </div>
         </section>
@@ -581,172 +549,172 @@ export default function Portfolio() {
           </div>
         </div>
 
-        <HorizontalExhibition projects={PROJECTS} />
+        <VerticalExhibition projects={PROJECTS} />
 
         <section id="manifesto" className="py-48 px-8 md:px-24 bg-paper-dark border-y border-black/5 relative overflow-hidden">
-           <div className="absolute top-0 right-0 opacity-[0.03] translate-x-1/4 -translate-y-1/4 select-none pointer-events-none">
-              <Globe size={1000} strokeWidth={1} className="animate-spin-slow text-accent" />
-           </div>
+          <div className="absolute top-0 right-0 opacity-[0.03] translate-x-1/4 -translate-y-1/4 select-none pointer-events-none">
+            <Globe size={1000} strokeWidth={1} className="animate-spin-slow text-accent" />
+          </div>
 
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-32 items-center">
-             <div className="space-y-20 relative z-10">
-                <div className="flex items-center gap-8">
-                   <div className="w-20 h-[2px] bg-accent" />
-                   <span className="font-sans font-black uppercase tracking-[1em] text-[10px] text-accent">Manifesto 26/04</span>
-                </div>
-                <h2 className="text-[8vw] font-black uppercase leading-[0.8] tracking-[calc(-0.06em)]">
-                  Tactile <br />
-                  <span className="text-accent font-script lowercase italic tracking-normal block -mt-2">Alchemy.</span>
-                </h2>
-                <div className="space-y-12">
-                  <p className="text-4xl font-script leading-tight opacity-90 italic max-w-2xl border-l-4 border-accent/10 pl-12 py-2">
-                    "We do not build interfaces; we engineer atmospheres. The digital medium is a tool for memory."
-                  </p>
-                  <p className="text-xl font-sans opacity-60 leading-relaxed max-w-2xl">
-                    Every interaction is an opportunity for presence. We distill complex systems into curated moments, bridging the chasm between mathematical coldness and human warmth.
-                  </p>
-                </div>
-                <div className="pt-8">
-                   <Magnetic strength={0.3} text="CURRICULUM">
-                     <button className="px-12 py-6 bg-primary text-paper font-black uppercase tracking-[0.4em] text-[10px] hover:bg-accent transition-all duration-700 shadow-high flex items-center gap-4">
-                        Read History.pdf
-                        <ArrowRight size={14} />
-                     </button>
-                   </Magnetic>
-                </div>
-             </div>
+            <div className="space-y-20 relative z-10">
+              <div className="flex items-center gap-8">
+                <div className="w-20 h-[2px] bg-accent" />
+                <span className="font-sans font-black uppercase tracking-[1em] text-[10px] text-accent">Manifesto 26/04</span>
+              </div>
+              <h2 className="text-[8vw] font-black uppercase leading-[0.8] tracking-[calc(-0.06em)]">
+                Tactile <br />
+                <span className="text-accent font-script lowercase italic tracking-normal block -mt-2">Alchemy.</span>
+              </h2>
+              <div className="space-y-12">
+                <p className="text-4xl font-script leading-tight opacity-90 italic max-w-2xl border-l-4 border-accent/10 pl-12 py-2">
+                  "We do not build interfaces; we engineer atmospheres. The digital medium is a tool for memory."
+                </p>
+                <p className="text-xl font-sans opacity-60 leading-relaxed max-w-2xl">
+                  Every interaction is an opportunity for presence. We distill complex systems into curated moments, bridging the chasm between mathematical coldness and human warmth.
+                </p>
+              </div>
+              <div className="pt-8">
+                <Magnetic strength={0.3} text="CURRICULUM">
+                  <button className="px-12 py-6 bg-primary text-paper font-black uppercase tracking-[0.4em] text-[10px] hover:bg-accent transition-all duration-700 shadow-high flex items-center gap-4">
+                    Read History.pdf
+                    <ArrowRight size={14} />
+                  </button>
+                </Magnetic>
+              </div>
+            </div>
 
-             <div className="relative group perspective-2000">
-                <motion.div 
-                  whileHover={{ rotateY: -10, rotateX: 5, scale: 1.05 }}
-                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                  className="aspect-[4/5] bg-white shadow-high p-8 relative overflow-hidden border border-black/5"
-                >
-                  <div className="w-full h-full relative overflow-hidden bg-paper-dark border border-black/5">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000" className="w-full h-full object-cover filter brightness-90 grayscale contrast-110" />
-                  </div>
-                </motion.div>
-                <div className="absolute -bottom-10 -left-10 bg-white p-12 border border-black/5 shadow-high rotate-[-6deg] hidden xl:block z-20">
-                  <span className="text-3xl font-serif font-black text-accent tracking-tighter block">INTEGRITY.</span>
+            <div className="relative group perspective-2000">
+              <motion.div
+                whileHover={{ rotateY: -10, rotateX: 5, scale: 1.05 }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                className="aspect-[4/5] bg-white shadow-high p-8 relative overflow-hidden border border-black/5"
+              >
+                <div className="w-full h-full relative overflow-hidden bg-paper-dark border border-black/5">
+                  <img src="/home/mulberry/.gemini/antigravity/brain/2fb08cb8-7a66-4b7f-a1ad-99bbf9ae9866/integrity_justice_portrait_1777511559474.png" className="w-full h-full object-cover filter brightness-90 grayscale contrast-110" />
                 </div>
-             </div>
+              </motion.div>
+              <div className="absolute -bottom-10 -left-10 bg-white p-12 border border-black/5 shadow-high rotate-[-6deg] hidden xl:block z-20">
+                <span className="text-3xl font-serif font-black text-accent tracking-tighter block">INTEGRITY.</span>
+              </div>
+            </div>
           </div>
         </section>
 
         <section id="services" className="py-48 px-8 md:px-24 overflow-hidden bg-white">
-           <div className="max-w-7xl mx-auto">
-              <div className="flex flex-col md:flex-row justify-between items-end mb-32 gap-20 border-b border-black/5 pb-16">
-                 <div className="space-y-8">
-                    <span className="text-[10px] font-sans font-black uppercase tracking-[0.8em] opacity-30 block">Taxonomy of Skill</span>
-                    <h2 className="text-[8vw] font-black uppercase tracking-[calc(-0.06em)] leading-[0.8]">
-                       Creative <br /> <span className="text-accent italic font-script lowercase tracking-normal">Distillation.</span>
-                    </h2>
-                 </div>
-                 <div className="max-w-md mb-4">
-                    <p className="text-2xl font-script opacity-50 leading-tight italic border-l-4 border-accent/10 pl-12">
-                       A meticulous audit of raw ambition transformed into structural digital presence.
-                    </p>
-                 </div>
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-32 gap-20 border-b border-black/5 pb-16">
+              <div className="space-y-8">
+                <span className="text-[10px] font-sans font-black uppercase tracking-[0.8em] opacity-30 block">Taxonomy of Skill</span>
+                <h2 className="text-[8vw] font-black uppercase tracking-[calc(-0.06em)] leading-[0.8]">
+                  Creative <br /> <span className="text-accent italic font-script lowercase tracking-normal">Distillation.</span>
+                </h2>
               </div>
+              <div className="max-w-md mb-4">
+                <p className="text-2xl font-script opacity-50 leading-tight italic border-l-4 border-accent/10 pl-12">
+                  A meticulous audit of raw ambition transformed into structural digital presence.
+                </p>
+              </div>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-black/[0.05]">
-                 <ServiceCardPremium 
-                    index={0}
-                    icon={PenTool}
-                    title="Aesthetic Strategy"
-                    desc="Constructing visual narratives that balance structural purity with sensory depth."
-                    price="$6,000+"
-                 />
-                 <ServiceCardPremium 
-                    index={1}
-                    icon={Code}
-                    title="Experience Eng."
-                    desc="High-fidelity engineering using React, Framer & GLSL for visceral flow."
-                    price="$10,000+"
-                 />
-                 <ServiceCardPremium 
-                    index={2}
-                    icon={Fingerprint}
-                    title="Architectures"
-                    desc="Scalable ecosystems for modern visionaries and global luxury institutions."
-                    price="$15,000+"
-                 />
-              </div>
-           </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-black/[0.05]">
+              <ServiceCardPremium
+                index={0}
+                icon={PenTool}
+                title="Aesthetic Strategy"
+                desc="Constructing visual narratives that balance structural purity with sensory depth."
+                price="$6,000+"
+              />
+              <ServiceCardPremium
+                index={1}
+                icon={Code}
+                title="Experience Eng."
+                desc="High-fidelity engineering using React, Framer & GLSL for visceral flow."
+                price="$10,000+"
+              />
+              <ServiceCardPremium
+                index={2}
+                icon={Fingerprint}
+                title="Architectures"
+                desc="Scalable ecosystems for modern visionaries and global luxury institutions."
+                price="$15,000+"
+              />
+            </div>
+          </div>
         </section>
 
         <section id="connect" className="py-48 px-8 overflow-hidden relative">
-           <div className="max-w-7xl mx-auto text-center relative z-10">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2 }}
+          <div className="max-w-7xl mx-auto text-center relative z-10">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2 }}
+            >
+              <div className="flex flex-col items-center gap-8 mb-16">
+                <span className="text-[12px] font-sans font-black uppercase tracking-[1em] opacity-40">Ready to secure the legacy?</span>
+                <div className="w-[1px] h-20 bg-accent opacity-20" />
+              </div>
+              <h2
+                className="text-[14vw] font-black uppercase tracking-[calc(-0.06em)] font-serif leading-[0.7] mb-32 cursor-pointer hover:text-accent transition-all duration-700 group relative inline-block"
+                data-cursor="LET'S TALK"
+                onClick={() => window.location.href = 'mailto:hello@zakdesign.studio'}
               >
-                <div className="flex flex-col items-center gap-8 mb-16">
-                   <span className="text-[12px] font-sans font-black uppercase tracking-[1em] opacity-40">Ready to secure the legacy?</span>
-                   <div className="w-[1px] h-20 bg-accent opacity-20" />
+                Reach Out.
+                <div className="absolute -top-12 -right-16 group-hover:scale-125 transition-transform duration-700">
+                  <Sparkles className="text-accent animate-pulse" size={100} />
                 </div>
-                <h2 
-                  className="text-[14vw] font-black uppercase tracking-[calc(-0.06em)] font-serif leading-[0.7] mb-32 cursor-pointer hover:text-accent transition-all duration-700 group relative inline-block" 
-                  data-cursor="LET'S TALK"
-                  onClick={() => window.location.href = 'mailto:hello@zakdesign.studio'}
-                >
-                  Reach Out.
-                  <div className="absolute -top-12 -right-16 group-hover:scale-125 transition-transform duration-700">
-                     <Sparkles className="text-accent animate-pulse" size={100} />
-                  </div>
-                </h2>
-              </motion.div>
-              
-              <div className="flex flex-wrap items-center justify-center gap-16 border-y border-black/5 py-16 mb-32">
-                 {["Instagram", "Twitter", "LinkedIn", "Dribbble"].map((social) => (
-                   <Magnetic key={social} strength={0.3} text="FOLLOW">
-                      <span className="text-3xl font-script italic opacity-40 hover:opacity-100 transition-all duration-700 hover:text-accent cursor-pointer">
-                        {social}
-                      </span>
-                   </Magnetic>
-                 ))}
+              </h2>
+            </motion.div>
+
+            <div className="flex flex-wrap items-center justify-center gap-16 border-y border-black/5 py-16 mb-32">
+              {["Instagram", "Twitter", "LinkedIn", "Dribbble"].map((social) => (
+                <Magnetic key={social} strength={0.3} text="FOLLOW">
+                  <span className="text-3xl font-script italic opacity-40 hover:opacity-100 transition-all duration-700 hover:text-accent cursor-pointer">
+                    {social}
+                  </span>
+                </Magnetic>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-16 items-center px-8">
+              <div className="flex flex-col md:items-start gap-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Local Time</span>
+                <span className="text-xl font-serif">{new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-16 items-center px-8">
-                 <div className="flex flex-col md:items-start gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Local Time</span>
-                    <span className="text-xl font-serif">{new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
-                 </div>
-                 
-                 <div className="flex items-center justify-center gap-4 px-8 py-4 bg-primary text-paper rounded-full group cursor-pointer hover:bg-accent transition-all duration-700">
-                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em]">Capacity Reached</span>
-                 </div>
-                 
-                 <div className="flex flex-col md:items-end gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Identity</span>
-                    <Fingerprint className="text-accent" size={24} />
-                 </div>
+              <div className="flex items-center justify-center gap-4 px-8 py-4 bg-primary text-paper rounded-full group cursor-pointer hover:bg-accent transition-all duration-700">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-[0.4em]">Capacity Reached</span>
               </div>
-           </div>
+
+              <div className="flex flex-col md:items-end gap-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Identity</span>
+                <Fingerprint className="text-accent" size={24} />
+              </div>
+            </div>
+          </div>
         </section>
       </main>
 
       <footer className="p-16 border-t border-black/5 bg-paper/60 backdrop-blur-3xl relative z-20">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-16">
           <div className="flex flex-col gap-4 text-center md:text-left">
-             <span className="text-3xl font-black uppercase tracking-tighter">Zak Studio™</span>
-             <span className="text-[9px] font-black uppercase tracking-[0.6em] opacity-30 italic">Bespoke Digital Systems</span>
+            <span className="text-3xl font-black uppercase tracking-tighter">Zak Studio™</span>
+            <span className="text-[9px] font-black uppercase tracking-[0.6em] opacity-30 italic">Bespoke Digital Systems</span>
           </div>
-          
+
           <div className="flex flex-wrap justify-center gap-12">
-             {["Ethos", "Terms", "Archive", "Manifesto"].map((link) => (
-               <span key={link} className="text-[9px] font-black uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity cursor-pointer">
-                 {link}
-               </span>
-             ))}
+            {["Ethos", "Terms", "Archive", "Manifesto"].map((link) => (
+              <span key={link} className="text-[9px] font-black uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity cursor-pointer">
+                {link}
+              </span>
+            ))}
           </div>
 
           <div className="flex items-center gap-8 px-10 py-4 bg-primary text-paper rounded-full border border-white/5">
-              <Code size={16} className="text-accent" />
-              <span className="text-[9px] font-black uppercase tracking-[0.6em]">Build 9.2.0-A</span>
+            <Code size={16} className="text-accent" />
+            <span className="text-[9px] font-black uppercase tracking-[0.6em]">Build 9.2.0-A</span>
           </div>
         </div>
       </footer>
