@@ -2,20 +2,19 @@
 
 
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useSpring, useInView, useVelocity } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useSpring, useTransform } from "framer-motion";
 import Lenis from "lenis";
+import Image from "next/image";
 import {
   Sparkles,
   PenTool,
   ChevronDown,
-  Camera,
   Globe,
   Code,
-  Zap,
   Fingerprint,
-  ArrowRight,
-  Maximize2
+  ArrowRight
 } from "lucide-react";
+
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -223,11 +222,11 @@ const ProjectCardVertical = ({ title, desc, img, index }: { title: string, desc:
     >
       <div className="w-full md:w-[60%] group relative">
         <div className="aspect-[16/10] overflow-hidden relative border border-black/5 shadow-high bg-paper-dark">
-          <motion.img 
+          <motion.img
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-            src={img} 
-            alt={title} 
+            src={img}
+            alt={title}
             className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
           />
           <div className="absolute top-8 right-8 mix-blend-difference text-white z-10">
@@ -236,7 +235,7 @@ const ProjectCardVertical = ({ title, desc, img, index }: { title: string, desc:
         </div>
         <Tape className="-top-6 left-10 w-40 -rotate-3 opacity-30 bg-accent/20 z-20" />
       </div>
-      
+
       <div className="w-full md:w-[40%] space-y-10 relative z-10">
         <div className="space-y-6">
           <div className="flex items-center gap-4">
@@ -251,35 +250,35 @@ const ProjectCardVertical = ({ title, desc, img, index }: { title: string, desc:
           "{desc}"
         </p>
         <div className="pt-8">
-           <Magnetic strength={0.3} text="VIEW PROJECT">
-              <button className="px-10 py-5 border border-black/10 hover:bg-primary hover:text-white transition-all duration-700 font-black uppercase tracking-[0.4em] text-[9px]">
-                 Explore Archive
-              </button>
-           </Magnetic>
+          <Magnetic strength={0.3} text="VIEW PROJECT">
+            <button className="px-10 py-5 border border-black/10 hover:bg-primary hover:text-white transition-all duration-700 font-black uppercase tracking-[0.4em] text-[9px]">
+              Explore Archive
+            </button>
+          </Magnetic>
         </div>
       </div>
     </motion.div>
   );
 };
 
-const VerticalExhibition = ({ projects }: { projects: any[] }) => {
+const VerticalExhibition = ({ projects }: { projects: typeof PROJECTS }) => {
   return (
-    <section id="work" className="py-64 px-8 md:px-24 bg-white relative overflow-hidden">
+    <section id="works" className="py-64 px-8 md:px-24 bg-white relative overflow-hidden">
       <div className="absolute top-0 right-0 opacity-[0.02] select-none pointer-events-none translate-x-1/4">
-         <span className="text-[30vw] font-black uppercase tracking-tighter leading-none">ARCHIVE</span>
+        <span className="text-[30vw] font-black uppercase tracking-tighter leading-none">ARCHIVE</span>
       </div>
 
       <div className="max-w-7xl mx-auto">
         <div className="mb-48 md:mb-72 relative">
-           <div className="flex items-center gap-8 mb-12">
-              <div className="w-24 h-[2px] bg-accent" />
-              <span className="text-[12px] font-black uppercase tracking-[1em] text-accent">Works Archive</span>
-           </div>
-           <h2 className="text-[12vw] font-black uppercase tracking-tighter leading-[0.75] font-serif">
-              Curated <br /> <span className="text-accent italic font-script lowercase tracking-normal">artifacts.</span>
-           </h2>
+          <div className="flex items-center gap-8 mb-12">
+            <div className="w-24 h-[2px] bg-accent" />
+            <span className="text-[12px] font-black uppercase tracking-[1em] text-accent">Works Archive</span>
+          </div>
+          <h2 className="text-[12vw] font-black uppercase tracking-tighter leading-[0.75] font-serif">
+            Curated <br /> <span className="text-accent italic font-script lowercase tracking-normal">artifacts.</span>
+          </h2>
         </div>
-        
+
         <div className="relative">
           {projects.map((proj, idx) => (
             <ProjectCardVertical key={idx} {...proj} index={idx} />
@@ -287,31 +286,18 @@ const VerticalExhibition = ({ projects }: { projects: any[] }) => {
         </div>
 
         <div className="mt-32 md:mt-64 flex flex-col items-center text-center space-y-12 border-t border-black/5 pt-32">
-           <Sparkles className="text-accent/20 animate-pulse" size={80} />
-           <h3 className="text-4xl md:text-6xl font-serif italic opacity-20 uppercase tracking-tighter">New artifacts in distillation.</h3>
-           <Magnetic strength={0.4} text="COLLABORATE">
-              <button className="px-16 py-8 bg-primary text-paper font-black uppercase tracking-[0.6em] text-[10px] hover:bg-accent transition-all duration-1000">
-                 Request Access
-              </button>
-           </Magnetic>
+          <Sparkles className="text-accent/20 animate-pulse" size={80} />
+          <h3 className="text-4xl md:text-6xl font-serif italic opacity-20 uppercase tracking-tighter">New artifacts in distillation.</h3>
+          <Magnetic strength={0.4} text="COLLABORATE">
+            <button className="px-16 py-8 bg-primary text-paper font-black uppercase tracking-[0.6em] text-[10px] hover:bg-accent transition-all duration-1000">
+              Request Access
+            </button>
+          </Magnetic>
         </div>
       </div>
     </section>
   );
 };
-
-
-// --- STATIC DATA ---
-
-const PROJECTS = [
-  { title: "Aura Engine", desc: "Real-time fluid simulation for reactive web environments.", img: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=1000" },
-  { title: "Nexus Proto", desc: "A decentralized operating layer for independent storytellers.", img: "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000" },
-  { title: "Velvet OS", desc: "Exploring the tactile boundaries of glassmorphism in UI.", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000" },
-  { title: "Echo Grid", desc: "Algorithmic music visualizer bridging sound and geometry.", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000" },
-  { title: "Solaris", desc: "Sustainable energy visualization and management suite.", img: "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1000" },
-];
-
-// --- MAIN PORTFOLIO COMPONENT ---
 
 export default function Portfolio() {
   const [mounted, setMounted] = useState(false);
@@ -322,6 +308,7 @@ export default function Portfolio() {
   const bgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     const timer = setTimeout(() => setLoading(false), 2000);
 
@@ -329,13 +316,14 @@ export default function Portfolio() {
       lerp: 0.08,
       wheelMultiplier: 1,
       smoothWheel: true,
-    } as any);
+    });
 
+    let rafId: number;
     function raf(time: number) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     const moveCursor = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -357,6 +345,7 @@ export default function Portfolio() {
     window.addEventListener("mousemove", moveCursor);
     return () => {
       clearTimeout(timer);
+      cancelAnimationFrame(rafId);
       lenis.destroy();
       window.removeEventListener("mousemove", moveCursor);
     };
@@ -384,6 +373,7 @@ export default function Portfolio() {
       style={{ backgroundColor, color: textColor }}
       className="min-h-screen overflow-x-hidden relative font-serif selection:bg-accent selection:text-paper motion-safe"
     >
+      {/* Custom Cursor */}
       <div
         ref={cursorRef}
         className={cn(
@@ -391,7 +381,7 @@ export default function Portfolio() {
           cursorType && "scale-[4] bg-white mix-blend-difference"
         )}
       >
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {cursorType && (
             <motion.span
               initial={{ opacity: 0, scale: 0 }}
@@ -406,6 +396,7 @@ export default function Portfolio() {
       </div>
       <div ref={followerRef} className="cursor-follower hidden md:block" />
 
+      {/* Background Elements */}
       <div className="bg-noise" />
       <div className="fixed inset-0 pointer-events-none bg-pattern z-0 opacity-40" />
 
@@ -421,8 +412,10 @@ export default function Portfolio() {
         />
       </div>
 
+      {/* Scroll Progress Bar */}
       <motion.div className="fixed top-0 left-0 right-0 h-1 bg-accent z-[1000] origin-left" style={{ scaleX }} />
 
+      {/* Preloader */}
       <AnimatePresence>
         {loading && (
           <motion.div
@@ -459,6 +452,7 @@ export default function Portfolio() {
         )}
       </AnimatePresence>
 
+      {/* Navigation */}
       <nav className="fixed top-0 left-0 w-full z-[100] p-10 flex justify-between items-start pointer-events-none">
         <div className="pointer-events-auto">
           <Magnetic text="ZAK DESIGN">
@@ -469,7 +463,7 @@ export default function Portfolio() {
           </Magnetic>
         </div>
         <div className="flex items-center gap-10 pointer-events-auto">
-          {["Works", "Manifesto", "Connect"].map((item, idx) => (
+          {["Works", "Manifesto", "Connect"].map((item) => (
             <Magnetic key={item} strength={0.3} text={item.toUpperCase()}>
               <a href={`#${item.toLowerCase()}`} className="group relative py-2 overflow-hidden block">
                 <span className="text-lg font-serif font-bold uppercase tracking-tight group-hover:text-accent transition-all duration-500">
@@ -483,6 +477,7 @@ export default function Portfolio() {
       </nav>
 
       <main>
+        {/* Hero Section */}
         <section className="min-h-screen flex flex-col items-center justify-center p-8 text-center relative overflow-hidden">
           <div className="max-w-7xl mx-auto z-10 relative">
             <motion.div
@@ -508,7 +503,7 @@ export default function Portfolio() {
 
               <div className="flex flex-col md:flex-row items-center justify-center gap-20 mt-32 border-t border-black/5 pt-20">
                 <p className="max-w-lg text-2xl font-script opacity-60 leading-tight italic text-left border-l-4 border-accent/20 pl-12 pr-4">
-                  "Distilling complex engineering into curated moments of presence. We design for sensory memory."
+                  &ldquo;Distilling complex engineering into curated moments of presence. We design for sensory memory.&rdquo;
                 </p>
                 <div className="flex flex-col items-center gap-6">
                   <Magnetic strength={0.4} text="ENTER">
@@ -521,22 +516,34 @@ export default function Portfolio() {
             </motion.div>
           </div>
 
+          {/* Decorative Floating Papers */}
           <div className="hidden xl:block opacity-40">
             <FloatingPaper className="absolute top-[20%] left-[8%] w-64 h-[400px] -rotate-6" rotation={-6}>
               <div className="w-full h-full bg-paper-dark grayscale border border-black/5 overflow-hidden group relative">
-                <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[4s]" />
+                <Image
+                  src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600"
+                  alt="Aesthetic Background 1"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-[4s]"
+                />
               </div>
               <Tape className="-top-6 left-1/2 -translate-x-1/2 w-40 bg-accent/20" />
             </FloatingPaper>
 
             <FloatingPaper className="absolute bottom-[10%] right-[10%] w-60 h-80 rotate-6" rotation={6} delay={1}>
               <div className="w-full h-full grayscale border border-black/5 overflow-hidden group relative">
-                <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=600" className="w-full h-full object-cover group-hover:grayscale-0 transition-all duration-700" />
+                <Image
+                  src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=600"
+                  alt="Aesthetic Background 2"
+                  fill
+                  className="object-cover group-hover:grayscale-0 transition-all duration-700"
+                />
               </div>
             </FloatingPaper>
           </div>
         </section>
 
+        {/* Marquee Section */}
         <div className="py-24 bg-primary overflow-hidden relative">
           <div className="flex whitespace-nowrap animate-marquee">
             {[...Array(4)].map((_, i) => (
@@ -549,8 +556,10 @@ export default function Portfolio() {
           </div>
         </div>
 
+        {/* Works Section */}
         <VerticalExhibition projects={PROJECTS} />
 
+        {/* Manifesto Section */}
         <section id="manifesto" className="py-48 px-8 md:px-24 bg-paper-dark border-y border-black/5 relative overflow-hidden">
           <div className="absolute top-0 right-0 opacity-[0.03] translate-x-1/4 -translate-y-1/4 select-none pointer-events-none">
             <Globe size={1000} strokeWidth={1} className="animate-spin-slow text-accent" />
@@ -568,7 +577,7 @@ export default function Portfolio() {
               </h2>
               <div className="space-y-12">
                 <p className="text-4xl font-script leading-tight opacity-90 italic max-w-2xl border-l-4 border-accent/10 pl-12 py-2">
-                  "We do not build interfaces; we engineer atmospheres. The digital medium is a tool for memory."
+                  &ldquo;We do not build interfaces; we engineer atmospheres. The digital medium is a tool for memory.&rdquo;
                 </p>
                 <p className="text-xl font-sans opacity-60 leading-relaxed max-w-2xl">
                   Every interaction is an opportunity for presence. We distill complex systems into curated moments, bridging the chasm between mathematical coldness and human warmth.
@@ -591,7 +600,12 @@ export default function Portfolio() {
                 className="aspect-[4/5] bg-white shadow-high p-8 relative overflow-hidden border border-black/5"
               >
                 <div className="w-full h-full relative overflow-hidden bg-paper-dark border border-black/5">
-                  <img src="/home/mulberry/.gemini/antigravity/brain/2fb08cb8-7a66-4b7f-a1ad-99bbf9ae9866/integrity_justice_portrait_1777511559474.png" className="w-full h-full object-cover filter brightness-90 grayscale contrast-110" />
+                  <Image
+                    src="/design_system.png"
+                    alt="Design System Visual"
+                    fill
+                    className="object-cover filter brightness-90 grayscale contrast-110"
+                  />
                 </div>
               </motion.div>
               <div className="absolute -bottom-10 -left-10 bg-white p-12 border border-black/5 shadow-high rotate-[-6deg] hidden xl:block z-20">
@@ -601,6 +615,7 @@ export default function Portfolio() {
           </div>
         </section>
 
+        {/* Services Section */}
         <section id="services" className="py-48 px-8 md:px-24 overflow-hidden bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-end mb-32 gap-20 border-b border-black/5 pb-16">
@@ -643,6 +658,7 @@ export default function Portfolio() {
           </div>
         </section>
 
+        {/* Connect Section */}
         <section id="connect" className="py-48 px-8 overflow-hidden relative">
           <div className="max-w-7xl mx-auto text-center relative z-10">
             <motion.div
@@ -655,16 +671,17 @@ export default function Portfolio() {
                 <span className="text-[12px] font-sans font-black uppercase tracking-[1em] opacity-40">Ready to secure the legacy?</span>
                 <div className="w-[1px] h-20 bg-accent opacity-20" />
               </div>
-              <h2
-                className="text-[14vw] font-black uppercase tracking-[calc(-0.06em)] font-serif leading-[0.7] mb-32 cursor-pointer hover:text-accent transition-all duration-700 group relative inline-block"
-                data-cursor="LET'S TALK"
-                onClick={() => window.location.href = 'mailto:hello@zakdesign.studio'}
-              >
-                Reach Out.
-                <div className="absolute -top-12 -right-16 group-hover:scale-125 transition-transform duration-700">
-                  <Sparkles className="text-accent animate-pulse" size={100} />
-                </div>
-              </h2>
+              <Magnetic strength={0.2} text="LET&apos;S TALK">
+                <button
+                  className="text-[14vw] font-black uppercase tracking-[calc(-0.06em)] font-serif leading-[0.7] mb-32 cursor-pointer hover:text-accent transition-all duration-700 group relative inline-block border-none bg-transparent"
+                  onClick={() => window.location.href = 'mailto:hello@zakdesign.studio'}
+                >
+                  Reach Out.
+                  <div className="absolute -top-12 -right-16 group-hover:scale-125 transition-transform duration-700">
+                    <Sparkles className="text-accent animate-pulse" size={100} />
+                  </div>
+                </button>
+              </Magnetic>
             </motion.div>
 
             <div className="flex flex-wrap items-center justify-center gap-16 border-y border-black/5 py-16 mb-32">
@@ -680,12 +697,14 @@ export default function Portfolio() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-16 items-center px-8">
               <div className="flex flex-col md:items-start gap-2">
                 <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Local Time</span>
-                <span className="text-xl font-serif">{new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                <span className="text-xl font-serif">
+                  {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                </span>
               </div>
 
               <div className="flex items-center justify-center gap-4 px-8 py-4 bg-primary text-paper rounded-full group cursor-pointer hover:bg-accent transition-all duration-700">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-[0.4em]">Capacity Reached</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.4em]">Available for projects</span>
               </div>
 
               <div className="flex flex-col md:items-end gap-2">
@@ -714,7 +733,7 @@ export default function Portfolio() {
 
           <div className="flex items-center gap-8 px-10 py-4 bg-primary text-paper rounded-full border border-white/5">
             <Code size={16} className="text-accent" />
-            <span className="text-[9px] font-black uppercase tracking-[0.6em]">Build 9.2.0-A</span>
+            <span className="text-[9px] font-black uppercase tracking-[0.6em]">Build 2026.05</span>
           </div>
         </div>
       </footer>

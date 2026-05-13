@@ -26,8 +26,15 @@ const script = AccentFont({
 });
 
 export const metadata: Metadata = {
-  title: "ZAKI | Design & Creative Code",
-  description: "A premium digital journal of selected works and experiments.",
+  title: "ZAKI | Bespoke Digital Experiences & Creative Engineering",
+  description: "Zaki Studio™ is a visual archive and creative engineering laboratory specializing in high-fidelity digital systems, aesthetic strategy, and visceral web experiences for 2026.",
+  keywords: ["Digital Experience", "Creative Engineering", "Bespoke Design", "Next.js Portfolio", "Framer Motion"],
+  authors: [{ name: "Zaki Maulana" }],
+  openGraph: {
+    title: "ZAKI | Bespoke Digital Experiences",
+    description: "Curated artifacts of digital reality and creative engineering.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
