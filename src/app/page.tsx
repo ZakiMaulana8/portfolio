@@ -1,20 +1,17 @@
 "use client";
 
-
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useInView } from "framer-motion";
 import Lenis from "lenis";
 import Image from "next/image";
 import {
-  Sparkles,
-  PenTool,
-  ChevronDown,
+  Zap,
+  Terminal,
+  ArrowRight,
   Globe,
-  Code,
-  Fingerprint,
-  ArrowRight
+  Code2,
+  Cpu
 } from "lucide-react";
-
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -22,721 +19,355 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// --- PREMIUM COMPONENTS ---
+// --- NEOBRUTALISM COMPONENTS ---
 
-const SplitText = ({ text, delay = 0, className, once = true }: { text: string, delay?: number, className?: string, once?: boolean }) => {
-  const words = text.split(" ");
-  return (
-    <div className={cn("inline-block", className)}>
-      {words.map((word, i) => (
-        <span key={i} className="inline-block whitespace-nowrap mr-[0.2em] overflow-hidden">
-          <motion.span
-            initial={{ y: "100%" }}
-            whileInView={{ y: 0 }}
-            viewport={{ once }}
-            transition={{
-              duration: 1.2,
-              delay: delay + (i * 0.05),
-              ease: [0.22, 1, 0.36, 1]
-            }}
-            className="inline-block"
-          >
-            {word}
-          </motion.span>
-        </span>
-      ))}
-    </div>
-  );
-};
-
-const Magnetic = ({ children, strength = 0.5, className, text }: { children: React.ReactNode, strength?: number, className?: string, text?: string }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const { clientX, clientY } = e;
-    const { left, top, width, height } = ref.current.getBoundingClientRect();
-    const x = (clientX - (left + width / 2)) * strength;
-    const y = (clientY - (top + height / 2)) * strength;
-    setPosition({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setPosition({ x: 0, y: 0 });
-  };
-
-  return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      animate={{ x: position.x, y: position.y }}
-      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-      className={cn("relative z-10", className)}
-      data-cursor={text}
-    >
-      {children}
-    </motion.div>
-  );
-};
-
-const Tape = ({ className, color = "bg-accent/20" }: { className?: string, color?: string }) => (
-  <div
-    className={cn(
-      "absolute h-10 backdrop-blur-[1px] border border-black/5 shadow-sm z-20 tape",
-      color,
-      className
-    )}
-  />
+const NeoCard = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <div className={cn("bg-white neo-border neo-shadow p-6 md:p-10", className)}>
+    {children}
+  </div>
 );
 
-const ProjectCardHorizontal = ({ title, desc, img, index, scrollYProgress, projectsCount }: { title: string, desc: string, img: string, index: number, scrollYProgress: any, projectsCount: number }) => {
-  // Simpler range calculation
-  const step = 1 / projectsCount;
-  const start = index * step;
-  const end = (index + 1) * step;
-
-  // Clamped parallax for the image
-  const imageX = useTransform(scrollYProgress, [start, end], ["-8%", "8%"], { clamp: true });
-
-  // Subtle scaling effect that won't hide the card
-  const scale = useTransform(scrollYProgress,
-    [start - step * 0.5, start + step * 0.5, end + step * 0.5],
-    [0.95, 1, 0.95],
-    { clamp: true }
-  );
-
-  return (
-    <motion.div
-      style={{ scale }}
-      className="relative group w-[80vw] md:w-[45vw] min-w-[300px] md:min-w-[550px] flex-shrink-0"
-      data-cursor="EXPLORE"
-    >
-      <div className="bg-white p-6 md:p-10 pb-16 md:pb-24 border border-black/5 shadow-high transition-all duration-700 ease-out group-hover:-translate-y-2 overflow-hidden">
-        <div className="aspect-[16/10] bg-paper-dark overflow-hidden relative">
-          <motion.img
-            style={{ x: imageX, scale: 1.15 }}
-            src={img}
-            alt={title}
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 ease-out"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
-          <div className="absolute top-4 right-4 flex flex-col items-end mix-blend-difference text-white">
-            <span className="text-[8px] font-black uppercase tracking-[0.3em]">Archive</span>
-            <span className="text-3xl font-serif font-black italic tracking-tighter">0{index + 1}</span>
-          </div>
-        </div>
-
-        <div className="mt-10 md:mt-14 px-2 relative">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="h-[1px] w-8 bg-accent" />
-            <span className="text-[10px] font-sans font-black uppercase tracking-[0.4em] text-accent">Selected Works</span>
-          </div>
-          <h3 className="text-3xl md:text-6xl font-bold font-serif uppercase tracking-tight mb-4 group-hover:text-accent transition-colors duration-500 leading-none">
-            {title}
-          </h3>
-          <p className="text-lg md:text-2xl font-script opacity-60 leading-tight italic pr-8 max-w-lg">{desc}</p>
-        </div>
-      </div>
-      <Tape className="-top-4 left-10 w-32 -rotate-2 opacity-30 bg-accent/10" />
-      <Tape className="-bottom-4 right-10 w-24 rotate-1 opacity-20 bg-accent/20" />
-    </motion.div>
-  );
-};
-
-const FloatingPaper = ({ children, className, rotation = 0, delay = 0 }: { children: React.ReactNode, className?: string, rotation?: number, delay?: number }) => (
-  <motion.div
-    initial={{ y: 50, opacity: 0, rotate: rotation - 5 }}
-    whileInView={{ y: 0, opacity: 1, rotate: rotation }}
-    viewport={{ once: true }}
-    animate={{
-      y: [0, -20, 0],
-      rotate: [rotation, rotation + 3, rotation]
-    }}
-    transition={{
-      duration: 8,
-      delay,
-      repeat: Infinity,
-      ease: "easeInOut",
-      y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
-    }}
-    className={cn("bg-white p-6 shadow-high border border-black/5 hover:scale-105 transition-transform duration-1000 cursor-default px-8 py-10", className)}
+const NeoButton = ({ children, className, onClick }: { children: React.ReactNode, className?: string, onClick?: () => void }) => (
+  <button 
+    onClick={onClick}
+    className={cn("bg-[#ff00ff] text-white neo-button px-8 py-4 flex items-center justify-center gap-2 hover:bg-[#00ffff] hover:text-black", className)}
   >
     {children}
-  </motion.div>
+  </button>
 );
 
-const ServiceCardPremium = ({ icon: Icon, title, desc, price, index }: { icon: any, title: string, desc: string, price: string, index: number }) => {
+const NeoTag = ({ text, color = "bg-[#00ffff]" }: { text: string, color?: string }) => (
+  <div className={cn("inline-flex neo-border-sm neo-shadow-sm px-4 py-1 text-sm font-black uppercase", color)}>
+    {text}
+  </div>
+);
+
+// --- SECTIONS ---
+
+const PROJECTS = [
+  {
+    title: "Ethereal Echoes",
+    desc: "A sensory exploration of digital landscapes, blending spatial audio with interactive fluid dynamics.",
+    img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000",
+    tags: ["WebGL", "Audio", "Interactive"]
+  },
+  {
+    title: "Silent Architecture",
+    desc: "Monolithic structures rendered in pure code. A study of brutalism in the immaterial realm.",
+    img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000",
+    tags: ["GLSL", "React", "Three.js"]
+  },
+  {
+    title: "Neural Canvas",
+    desc: "Generative algorithms translating human emotional states into evolving abstract tapestries.",
+    img: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000",
+    tags: ["AI", "Generative", "Canvas"]
+  },
+  {
+    title: "Chromatic Void",
+    desc: "An experiment in color theory and perception, pushing the boundaries of digital luminescence.",
+    img: "https://images.unsplash.com/photo-1604871000636-074fa5117945?q=80&w=1000",
+    tags: ["UX/UI", "Framer", "CSS"]
+  }
+];
+
+const ProjectCard = ({ title, desc, img, tags, index }: { title: string, desc: string, img: string, tags: string[], index: number }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 1.2, delay: index * 0.15, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative bg-white p-12 border border-black/5 hover:border-accent/30 transition-all duration-700 hover:shadow-high cursor-default overflow-hidden"
+      initial={{ opacity: 0, x: -50, y: 50 }}
+      animate={isInView ? { opacity: 1, x: 0, y: 0 } : {}}
+      transition={{ duration: 0.5, type: "spring", bounce: 0.4 }}
+      className="mb-20 last:mb-0 relative"
     >
-      <div className="relative z-10">
-        <div className="flex justify-between items-start mb-16">
-          <div className="w-16 h-16 bg-accent/5 rounded-full flex items-center justify-center group-hover:bg-accent group-hover:text-paper transition-all duration-700 group-hover:scale-110">
-            <Icon size={24} strokeWidth={1} />
-          </div>
-          <div className="text-right">
-            <span className="text-6xl font-serif text-black/5 group-hover:text-accent/10 transition-colors duration-700 select-none block leading-none">0{index + 1}</span>
-          </div>
-        </div>
-        <h3 className="text-4xl font-black font-serif uppercase tracking-tight mb-6 leading-none group-hover:translate-x-2 transition-transform duration-700">{title}</h3>
-        <p className="text-2xl font-script opacity-60 leading-tight mb-12 italic group-hover:opacity-100 transition-opacity duration-700 border-l-2 border-accent/10 pl-6">{desc}</p>
-        <div className="flex items-center justify-between border-t border-black/5 pt-8">
-          <div className="flex items-center gap-4">
-            <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span className="text-[10px] font-sans font-black uppercase tracking-[0.4em] opacity-30">Starting</span>
-          </div>
-          <span className="text-2xl font-black font-sans tracking-tight text-accent">{price}</span>
+      <div className="absolute -top-6 -left-6 z-10">
+        <div className="bg-[#ff00ff] text-white neo-border neo-shadow w-16 h-16 flex items-center justify-center text-3xl font-black rotate-12">
+          {index + 1}
         </div>
       </div>
-    </motion.div>
-  );
-};
-
-// --- VERTICAL SECTION COMPONENT ---
-
-const ProjectCardVertical = ({ title, desc, img, index }: { title: string, desc: string, img: string, index: number }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 100 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-      className={cn(
-        "flex flex-col md:flex-row items-center gap-12 md:gap-32 mb-32 md:mb-64 relative",
-        index % 2 !== 0 && "md:flex-row-reverse"
-      )}
-    >
-      <div className="w-full md:w-[60%] group relative">
-        <div className="aspect-[16/10] overflow-hidden relative border border-black/5 shadow-high bg-paper-dark">
-          <motion.img
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+      <NeoCard className="flex flex-col lg:flex-row gap-10 p-0 overflow-hidden bg-[#f0f0f0]">
+        <div className="w-full lg:w-1/2 neo-border-r relative min-h-[300px]">
+          <Image
             src={img}
             alt={title}
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+            fill
+            className="object-cover hover:scale-110 transition-transform duration-500 filter contrast-125 saturate-150"
           />
-          <div className="absolute top-8 right-8 mix-blend-difference text-white z-10">
-            <span className="text-6xl font-serif italic opacity-40">0{index + 1}</span>
+        </div>
+        <div className="w-full lg:w-1/2 p-8 md:p-12 flex flex-col justify-between bg-white">
+          <div>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {tags.map((tag, i) => (
+                <NeoTag key={tag} text={tag} color={i % 2 === 0 ? "bg-[#00ffff]" : "bg-[#fdf200]"} />
+              ))}
+            </div>
+            <h3 className="text-4xl md:text-6xl font-black uppercase mb-6 leading-none">
+              {title}
+            </h3>
+            <p className="text-xl md:text-2xl font-sans font-bold border-l-8 border-black pl-6 mb-10">
+              {desc}
+            </p>
           </div>
+          <NeoButton className="self-start text-xl">
+            VIEW PROJECT <ArrowRight />
+          </NeoButton>
         </div>
-        <Tape className="-top-6 left-10 w-40 -rotate-3 opacity-30 bg-accent/20 z-20" />
-      </div>
-
-      <div className="w-full md:w-[40%] space-y-10 relative z-10">
-        <div className="space-y-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-[1px] bg-accent" />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent">Artifact {index + 1}</span>
-          </div>
-          <h3 className="text-5xl md:text-[6vw] font-black uppercase tracking-tighter leading-[0.8] font-serif italic">
-            {title}
-          </h3>
-        </div>
-        <p className="text-2xl md:text-3xl font-script opacity-60 leading-tight italic border-l-4 border-accent/10 pl-10">
-          "{desc}"
-        </p>
-        <div className="pt-8">
-          <Magnetic strength={0.3} text="VIEW PROJECT">
-            <button className="px-10 py-5 border border-black/10 hover:bg-primary hover:text-white transition-all duration-700 font-black uppercase tracking-[0.4em] text-[9px]">
-              Explore Archive
-            </button>
-          </Magnetic>
-        </div>
-      </div>
+      </NeoCard>
     </motion.div>
   );
 };
 
-const VerticalExhibition = ({ projects }: { projects: typeof PROJECTS }) => {
+const ServiceCard = ({ icon: Icon, title, desc, price, color }: any) => {
   return (
-    <section id="works" className="py-64 px-8 md:px-24 bg-white relative overflow-hidden">
-      <div className="absolute top-0 right-0 opacity-[0.02] select-none pointer-events-none translate-x-1/4">
-        <span className="text-[30vw] font-black uppercase tracking-tighter leading-none">ARCHIVE</span>
+    <NeoCard className={cn("flex flex-col h-full hover:-translate-y-2 transition-transform", color)}>
+      <div className="bg-white neo-border w-20 h-20 flex items-center justify-center mb-8 neo-shadow-sm rotate-3">
+        <Icon size={40} />
       </div>
-
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-48 md:mb-72 relative">
-          <div className="flex items-center gap-8 mb-12">
-            <div className="w-24 h-[2px] bg-accent" />
-            <span className="text-[12px] font-black uppercase tracking-[1em] text-accent">Works Archive</span>
-          </div>
-          <h2 className="text-[12vw] font-black uppercase tracking-tighter leading-[0.75] font-serif">
-            Curated <br /> <span className="text-accent italic font-script lowercase tracking-normal">artifacts.</span>
-          </h2>
-        </div>
-
-        <div className="relative">
-          {projects.map((proj, idx) => (
-            <ProjectCardVertical key={idx} {...proj} index={idx} />
-          ))}
-        </div>
-
-        <div className="mt-32 md:mt-64 flex flex-col items-center text-center space-y-12 border-t border-black/5 pt-32">
-          <Sparkles className="text-accent/20 animate-pulse" size={80} />
-          <h3 className="text-4xl md:text-6xl font-serif italic opacity-20 uppercase tracking-tighter">New artifacts in distillation.</h3>
-          <Magnetic strength={0.4} text="COLLABORATE">
-            <button className="px-16 py-8 bg-primary text-paper font-black uppercase tracking-[0.6em] text-[10px] hover:bg-accent transition-all duration-1000">
-              Request Access
-            </button>
-          </Magnetic>
-        </div>
+      <h3 className="text-3xl font-black uppercase mb-4">{title}</h3>
+      <p className="text-lg font-bold mb-8 flex-grow bg-white p-4 neo-border">{desc}</p>
+      <div className="flex justify-between items-center bg-black text-white p-4 neo-border">
+        <span className="font-bold uppercase">Starting</span>
+        <span className="font-black text-2xl text-[#00ffff]">{price}</span>
       </div>
-    </section>
+    </NeoCard>
   );
 };
 
 export default function Portfolio() {
   const [mounted, setMounted] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [cursorType, setCursorType] = useState<string | null>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const followerRef = useRef<HTMLDivElement>(null);
-  const bgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
-    const timer = setTimeout(() => setLoading(false), 2000);
-
+    
     const lenis = new Lenis({
-      lerp: 0.08,
-      wheelMultiplier: 1,
+      lerp: 0.1,
       smoothWheel: true,
     });
 
-    let rafId: number;
     function raf(time: number) {
       lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
+      requestAnimationFrame(raf);
     }
-    rafId = requestAnimationFrame(raf);
+    requestAnimationFrame(raf);
 
     const moveCursor = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const cursorData = target.closest("[data-cursor]")?.getAttribute("data-cursor");
-      setCursorType(cursorData || null);
-
       if (cursorRef.current && followerRef.current) {
-        cursorRef.current.style.transform = `translate3d(${e.clientX - 10}px, ${e.clientY - 10}px, 0)`;
-        followerRef.current.style.transform = `translate3d(${e.clientX - 24}px, ${e.clientY - 24}px, 0)`;
-      }
-
-      if (bgRef.current) {
-        const x = (e.clientX - window.innerWidth / 2) * 0.05;
-        const y = (e.clientY - window.innerHeight / 2) * 0.05;
-        bgRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        cursorRef.current.style.transform = `translate3d(${e.clientX - 12}px, ${e.clientY - 12}px, 0)`;
+        followerRef.current.style.transform = `translate3d(${e.clientX - 32}px, ${e.clientY - 32}px, 0)`;
       }
     };
 
     window.addEventListener("mousemove", moveCursor);
     return () => {
-      clearTimeout(timer);
-      cancelAnimationFrame(rafId);
       lenis.destroy();
       window.removeEventListener("mousemove", moveCursor);
     };
   }, []);
 
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-
-  const backgroundColor = useTransform(
-    scrollYProgress,
-    [0, 0.4, 0.6, 1],
-    ["#f8fafc", "#f1f5f9", "#0f172a", "#f8fafc"]
-  );
-
-  const textColor = useTransform(
-    scrollYProgress,
-    [0, 0.45, 0.55, 1],
-    ["#0f172a", "#0f172a", "#f8fafc", "#0f172a"]
-  );
 
   if (!mounted) return null;
 
   return (
-    <motion.div
-      style={{ backgroundColor, color: textColor }}
-      className="min-h-screen overflow-x-hidden relative font-serif selection:bg-accent selection:text-paper motion-safe"
-    >
+    <div className="min-h-screen relative font-sans selection:bg-[#ff00ff] selection:text-white motion-safe bg-pattern">
       {/* Custom Cursor */}
-      <div
-        ref={cursorRef}
-        className={cn(
-          "cursor-follow hidden md:flex items-center justify-center",
-          cursorType && "scale-[4] bg-white mix-blend-difference"
-        )}
-      >
-        <AnimatePresence mode="wait">
-          {cursorType && (
-            <motion.span
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0 }}
-              className="text-[3px] font-black uppercase tracking-[0.1em] text-primary text-center pointer-events-none"
-            >
-              {cursorType}
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </div>
+      <div ref={cursorRef} className="cursor-follow hidden md:block" />
       <div ref={followerRef} className="cursor-follower hidden md:block" />
 
-      {/* Background Elements */}
-      <div className="bg-noise" />
-      <div className="fixed inset-0 pointer-events-none bg-pattern z-0 opacity-40" />
-
-      <div className="fixed inset-0 pointer-events-none opacity-20 z-0">
-        <motion.div
-          ref={bgRef}
-          animate={{
-            scale: [1, 1.1, 1],
-            rotate: [0, 45, 0],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute top-1/4 left-1/4 w-[50vw] h-[50vw] bg-accent/5 blur-[120px] rounded-full"
-        />
-      </div>
-
-      {/* Scroll Progress Bar */}
-      <motion.div className="fixed top-0 left-0 right-0 h-1 bg-accent z-[1000] origin-left" style={{ scaleX }} />
-
-      {/* Preloader */}
-      <AnimatePresence>
-        {loading && (
-          <motion.div
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, filter: "blur(40px)", scale: 1.1 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[2000] bg-paper flex flex-col items-center justify-center"
-          >
-            <div className="relative overflow-hidden px-16 py-8">
-              <motion.div
-                initial={{ y: "150%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                className="text-7xl md:text-[8vw] font-serif font-black uppercase tracking-[calc(-0.06em)] flex items-center gap-8"
-              >
-                Archive
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                >
-                  <Sparkles className="text-accent" size={60} />
-                </motion.div>
-              </motion.div>
-              <div className="absolute bottom-2 left-0 w-full h-[2px] bg-black/5">
-                <motion.div
-                  initial={{ x: "-100%" }}
-                  animate={{ x: "100%" }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                  className="w-full h-full bg-accent"
-                />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Progress Bar */}
+      <motion.div 
+        className="fixed top-0 left-0 h-4 bg-[#00ffff] neo-border-b z-[1000] origin-left" 
+        style={{ scaleX: scrollYProgress, width: '100%' }} 
+      />
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 w-full z-[100] p-10 flex justify-between items-start pointer-events-none">
-        <div className="pointer-events-auto">
-          <Magnetic text="ZAK DESIGN">
-            <div className="group cursor-pointer">
-              <span className="text-3xl font-black uppercase tracking-tighter block leading-none">Zak Studio™</span>
-              <span className="text-[9px] font-sans font-black uppercase tracking-[0.6em] opacity-40 group-hover:opacity-100 transition-opacity">Visual Archive</span>
-            </div>
-          </Magnetic>
+      <nav className="fixed top-4 left-4 right-4 md:top-8 md:left-8 md:right-8 z-[100] flex justify-between items-center pointer-events-none">
+        <div className="bg-white neo-border neo-shadow-sm px-6 py-3 pointer-events-auto -rotate-2 hover:rotate-0 transition-transform">
+          <span className="text-2xl font-black uppercase tracking-tighter">Zak Studio™</span>
         </div>
-        <div className="flex items-center gap-10 pointer-events-auto">
-          {["Works", "Manifesto", "Connect"].map((item) => (
-            <Magnetic key={item} strength={0.3} text={item.toUpperCase()}>
-              <a href={`#${item.toLowerCase()}`} className="group relative py-2 overflow-hidden block">
-                <span className="text-lg font-serif font-bold uppercase tracking-tight group-hover:text-accent transition-all duration-500">
-                  {item}
-                </span>
-                <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-accent group-hover:w-full transition-all duration-500" />
-              </a>
-            </Magnetic>
+        <div className="hidden md:flex gap-4 pointer-events-auto">
+          {["Works", "Manifesto", "Services"].map((item) => (
+            <a 
+              key={item} 
+              href={`#${item.toLowerCase()}`} 
+              className="bg-white neo-border neo-shadow-sm px-6 py-2 font-black uppercase hover:bg-[#00ffff] hover:-translate-y-1 transition-all"
+            >
+              {item}
+            </a>
           ))}
         </div>
       </nav>
 
       <main>
         {/* Hero Section */}
-        <section className="min-h-screen flex flex-col items-center justify-center p-8 text-center relative overflow-hidden">
-          <div className="max-w-7xl mx-auto z-10 relative">
+        <section className="min-h-screen flex flex-col items-center justify-center p-8 text-center relative pt-32 pb-20">
+          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-1/4 left-10 w-64 h-64 bg-[#ff00ff] neo-border neo-shadow rounded-full mix-blend-multiply animate-pulse" />
+            <div className="absolute bottom-1/4 right-10 w-80 h-80 bg-[#00ffff] neo-border neo-shadow mix-blend-multiply animate-bounce" style={{ animationDuration: '3s' }} />
+          </div>
+
+          <div className="max-w-6xl mx-auto z-10 relative">
             <motion.div
-              initial={{ y: 150, opacity: 0 }}
+              initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.5 }}
             >
-              <div className="inline-flex items-center gap-8 px-8 py-3 border border-black/10 bg-white/40 backdrop-blur-3xl rounded-full text-[10px] font-black uppercase tracking-[0.6em] mb-20 shadow-high group hover:bg-primary hover:text-paper transition-all duration-700 cursor-none" data-cursor="OPEN">
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="w-2 h-2 bg-accent rounded-full"
-                />
-                <span>Engineering Experience for 2026</span>
+              <div className="inline-block bg-white neo-border neo-shadow px-8 py-4 mb-12 rotate-2">
+                <span className="text-xl font-black uppercase flex items-center gap-4">
+                  <Zap className="text-[#ff00ff]" fill="#ff00ff" />
+                  Engineering Experience for 2026
+                  <Zap className="text-[#ff00ff]" fill="#ff00ff" />
+                </span>
               </div>
 
-              <h1 className="text-[12vw] font-black uppercase leading-[0.75] tracking-[calc(-0.06em)] font-serif mb-16">
-                <SplitText text="Bespoke" /> <br />
-                <span className="text-accent italic font-script lowercase tracking-normal block transform -rotate-1">
-                  <SplitText text="Digital Reality" delay={0.4} />
-                </span>
+              <h1 className="text-[15vw] md:text-[10vw] font-black uppercase leading-[0.85] tracking-tighter mb-10">
+                <span className="bg-white px-4 inline-block neo-border neo-shadow mb-4 -rotate-1 hover:rotate-1 transition-transform">BESPOKE</span>
+                <br />
+                <span className="bg-[#00ffff] px-4 inline-block neo-border neo-shadow rotate-2 hover:-rotate-1 transition-transform">DIGITAL</span>
+                <br />
+                <span className="bg-[#ff00ff] text-white px-4 inline-block neo-border neo-shadow -rotate-2 hover:rotate-2 transition-transform">REALITY</span>
               </h1>
 
-              <div className="flex flex-col md:flex-row items-center justify-center gap-20 mt-32 border-t border-black/5 pt-20">
-                <p className="max-w-lg text-2xl font-script opacity-60 leading-tight italic text-left border-l-4 border-accent/20 pl-12 pr-4">
-                  &ldquo;Distilling complex engineering into curated moments of presence. We design for sensory memory.&rdquo;
+              <div className="flex flex-col md:flex-row items-center justify-center gap-8 mt-20">
+                <p className="max-w-xl text-2xl font-bold bg-white p-6 neo-border neo-shadow text-left">
+                  Distilling complex engineering into highly structural digital presence. We build loud, we build bold.
                 </p>
-                <div className="flex flex-col items-center gap-6">
-                  <Magnetic strength={0.4} text="ENTER">
-                    <div className="w-24 h-24 rounded-full border border-black/10 flex items-center justify-center group hover:bg-accent hover:text-paper hover:border-transparent transition-all duration-1000 cursor-pointer shadow-high bg-white/20 backdrop-blur-md">
-                      <ChevronDown className="group-hover:translate-y-2 transition-transform duration-700" size={32} strokeWidth={1} />
-                    </div>
-                  </Magnetic>
-                </div>
+                <NeoButton className="text-2xl py-6 px-12 rotate-3 animate-pulse" onClick={() => document.getElementById('works')?.scrollIntoView()}>
+                  ENTER THE VOID
+                </NeoButton>
               </div>
             </motion.div>
           </div>
-
-          {/* Decorative Floating Papers */}
-          <div className="hidden xl:block opacity-40">
-            <FloatingPaper className="absolute top-[20%] left-[8%] w-64 h-[400px] -rotate-6" rotation={-6}>
-              <div className="w-full h-full bg-paper-dark grayscale border border-black/5 overflow-hidden group relative">
-                <Image
-                  src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=600"
-                  alt="Aesthetic Background 1"
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-[4s]"
-                />
-              </div>
-              <Tape className="-top-6 left-1/2 -translate-x-1/2 w-40 bg-accent/20" />
-            </FloatingPaper>
-
-            <FloatingPaper className="absolute bottom-[10%] right-[10%] w-60 h-80 rotate-6" rotation={6} delay={1}>
-              <div className="w-full h-full grayscale border border-black/5 overflow-hidden group relative">
-                <Image
-                  src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=600"
-                  alt="Aesthetic Background 2"
-                  fill
-                  className="object-cover group-hover:grayscale-0 transition-all duration-700"
-                />
-              </div>
-            </FloatingPaper>
-          </div>
         </section>
 
-        {/* Marquee Section */}
-        <div className="py-24 bg-primary overflow-hidden relative">
+        {/* Marquee */}
+        <div className="py-6 bg-black neo-border-y overflow-hidden relative rotate-1 scale-110 z-20">
           <div className="flex whitespace-nowrap animate-marquee">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex items-center gap-10">
-                <span className="text-[10vw] font-serif font-black uppercase text-paper/5 px-16 tracking-[calc(-0.04em)] flex items-center gap-10">
-                  Experimental Works <Sparkles className="text-accent/20" size={100} /> The Archive
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="flex items-center gap-8 px-8">
+                <span className="text-4xl font-black uppercase text-white tracking-widest">
+                  NO MORE BORING WEBSITES
                 </span>
+                <span className="text-[#ff00ff] font-black text-4xl">+++</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Works Section */}
-        <VerticalExhibition projects={PROJECTS} />
-
-        {/* Manifesto Section */}
-        <section id="manifesto" className="py-48 px-8 md:px-24 bg-paper-dark border-y border-black/5 relative overflow-hidden">
-          <div className="absolute top-0 right-0 opacity-[0.03] translate-x-1/4 -translate-y-1/4 select-none pointer-events-none">
-            <Globe size={1000} strokeWidth={1} className="animate-spin-slow text-accent" />
+        <section id="works" className="py-32 px-4 md:px-12 max-w-7xl mx-auto relative z-10">
+          <div className="bg-white neo-border neo-shadow p-6 inline-block mb-20 -rotate-2">
+            <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter">
+              Selected <span className="text-[#ff00ff]">Works</span>
+            </h2>
           </div>
-
-          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-32 items-center">
-            <div className="space-y-20 relative z-10">
-              <div className="flex items-center gap-8">
-                <div className="w-20 h-[2px] bg-accent" />
-                <span className="font-sans font-black uppercase tracking-[1em] text-[10px] text-accent">Manifesto 26/04</span>
-              </div>
-              <h2 className="text-[8vw] font-black uppercase leading-[0.8] tracking-[calc(-0.06em)]">
-                Tactile <br />
-                <span className="text-accent font-script lowercase italic tracking-normal block -mt-2">Alchemy.</span>
-              </h2>
-              <div className="space-y-12">
-                <p className="text-4xl font-script leading-tight opacity-90 italic max-w-2xl border-l-4 border-accent/10 pl-12 py-2">
-                  &ldquo;We do not build interfaces; we engineer atmospheres. The digital medium is a tool for memory.&rdquo;
-                </p>
-                <p className="text-xl font-sans opacity-60 leading-relaxed max-w-2xl">
-                  Every interaction is an opportunity for presence. We distill complex systems into curated moments, bridging the chasm between mathematical coldness and human warmth.
-                </p>
-              </div>
-              <div className="pt-8">
-                <Magnetic strength={0.3} text="CURRICULUM">
-                  <button className="px-12 py-6 bg-primary text-paper font-black uppercase tracking-[0.4em] text-[10px] hover:bg-accent transition-all duration-700 shadow-high flex items-center gap-4">
-                    Read History.pdf
-                    <ArrowRight size={14} />
-                  </button>
-                </Magnetic>
-              </div>
-            </div>
-
-            <div className="relative group perspective-2000">
-              <motion.div
-                whileHover={{ rotateY: -10, rotateX: 5, scale: 1.05 }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                className="aspect-[4/5] bg-white shadow-high p-8 relative overflow-hidden border border-black/5"
-              >
-                <div className="w-full h-full relative overflow-hidden bg-paper-dark border border-black/5">
-                  <Image
-                    src="/design_system.png"
-                    alt="Design System Visual"
-                    fill
-                    className="object-cover filter brightness-90 grayscale contrast-110"
-                  />
-                </div>
-              </motion.div>
-              <div className="absolute -bottom-10 -left-10 bg-white p-12 border border-black/5 shadow-high rotate-[-6deg] hidden xl:block z-20">
-                <span className="text-3xl font-serif font-black text-accent tracking-tighter block">INTEGRITY.</span>
-              </div>
-            </div>
+          
+          <div>
+            {PROJECTS.map((proj, idx) => (
+              <ProjectCard key={idx} {...proj} index={idx} />
+            ))}
           </div>
         </section>
 
+        {/* Marquee 2 */}
+        <div className="py-6 bg-[#00ffff] neo-border-y overflow-hidden relative -rotate-2 scale-110 z-20">
+          <div className="flex whitespace-nowrap animate-marquee" style={{ animationDirection: 'reverse' }}>
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="flex items-center gap-8 px-8">
+                <span className="text-4xl font-black uppercase text-black tracking-widest">
+                  BRUTALIST APPROACH
+                </span>
+                <span className="text-black font-black text-4xl">///</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Services Section */}
-        <section id="services" className="py-48 px-8 md:px-24 overflow-hidden bg-white">
+        <section id="services" className="py-32 px-4 md:px-12 bg-white neo-border-y">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-32 gap-20 border-b border-black/5 pb-16">
-              <div className="space-y-8">
-                <span className="text-[10px] font-sans font-black uppercase tracking-[0.8em] opacity-30 block">Taxonomy of Skill</span>
-                <h2 className="text-[8vw] font-black uppercase tracking-[calc(-0.06em)] leading-[0.8]">
-                  Creative <br /> <span className="text-accent italic font-script lowercase tracking-normal">Distillation.</span>
+            <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-10">
+              <div className="bg-[#ff00ff] text-white neo-border neo-shadow p-6 inline-block rotate-1">
+                <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter">
+                  Skill <span className="text-[#00ffff]">Tree</span>
                 </h2>
               </div>
-              <div className="max-w-md mb-4">
-                <p className="text-2xl font-script opacity-50 leading-tight italic border-l-4 border-accent/10 pl-12">
-                  A meticulous audit of raw ambition transformed into structural digital presence.
-                </p>
-              </div>
+              <p className="text-2xl font-bold bg-[#fdf200] p-6 neo-border neo-shadow max-w-md -rotate-1">
+                A meticulous audit of raw ambition transformed into structural digital presence.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-black/[0.05]">
-              <ServiceCardPremium
-                index={0}
-                icon={PenTool}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <ServiceCard
+                icon={Terminal}
                 title="Aesthetic Strategy"
                 desc="Constructing visual narratives that balance structural purity with sensory depth."
                 price="$6,000+"
+                color="bg-[#00ffff]"
               />
-              <ServiceCardPremium
-                index={1}
-                icon={Code}
+              <ServiceCard
+                icon={Code2}
                 title="Experience Eng."
                 desc="High-fidelity engineering using React, Framer & GLSL for visceral flow."
                 price="$10,000+"
+                color="bg-[#ff00ff]"
               />
-              <ServiceCardPremium
-                index={2}
-                icon={Fingerprint}
+              <ServiceCard
+                icon={Cpu}
                 title="Architectures"
                 desc="Scalable ecosystems for modern visionaries and global luxury institutions."
                 price="$15,000+"
+                color="bg-[#fdf200]"
               />
             </div>
           </div>
         </section>
 
         {/* Connect Section */}
-        <section id="connect" className="py-48 px-8 overflow-hidden relative">
-          <div className="max-w-7xl mx-auto text-center relative z-10">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2 }}
-            >
-              <div className="flex flex-col items-center gap-8 mb-16">
-                <span className="text-[12px] font-sans font-black uppercase tracking-[1em] opacity-40">Ready to secure the legacy?</span>
-                <div className="w-[1px] h-20 bg-accent opacity-20" />
-              </div>
-              <Magnetic strength={0.2} text="LET&apos;S TALK">
-                <button
-                  className="text-[14vw] font-black uppercase tracking-[calc(-0.06em)] font-serif leading-[0.7] mb-32 cursor-pointer hover:text-accent transition-all duration-700 group relative inline-block border-none bg-transparent"
-                  onClick={() => window.location.href = 'mailto:hello@zakdesign.studio'}
-                >
-                  Reach Out.
-                  <div className="absolute -top-12 -right-16 group-hover:scale-125 transition-transform duration-700">
-                    <Sparkles className="text-accent animate-pulse" size={100} />
-                  </div>
-                </button>
-              </Magnetic>
-            </motion.div>
-
-            <div className="flex flex-wrap items-center justify-center gap-16 border-y border-black/5 py-16 mb-32">
-              {["Instagram", "Twitter", "LinkedIn", "Dribbble"].map((social) => (
-                <Magnetic key={social} strength={0.3} text="FOLLOW">
-                  <span className="text-3xl font-script italic opacity-40 hover:opacity-100 transition-all duration-700 hover:text-accent cursor-pointer">
-                    {social}
-                  </span>
-                </Magnetic>
-              ))}
+        <section id="connect" className="py-40 px-4 md:px-12 max-w-7xl mx-auto text-center">
+          <div className="bg-white neo-border neo-shadow p-12 md:p-24 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-pattern opacity-50" />
+            
+            <div className="relative z-10">
+              <h2 className="text-[10vw] md:text-[8vw] font-black uppercase leading-none mb-12 group-hover:scale-105 transition-transform">
+                LET'S <span className="bg-black text-white px-4">TALK</span>
+              </h2>
+              
+              <NeoButton 
+                className="mx-auto text-3xl py-8 px-16 -rotate-2 hover:rotate-2"
+                onClick={() => window.location.href = 'mailto:hello@zakdesign.studio'}
+              >
+                START A PROJECT <Globe className="animate-spin-slow" size={40} />
+              </NeoButton>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-16 items-center px-8">
-              <div className="flex flex-col md:items-start gap-2">
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Local Time</span>
-                <span className="text-xl font-serif">
-                  {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-center gap-4 px-8 py-4 bg-primary text-paper rounded-full group cursor-pointer hover:bg-accent transition-all duration-700">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-[0.4em]">Available for projects</span>
-              </div>
-
-              <div className="flex flex-col md:items-end gap-2">
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">Identity</span>
-                <Fingerprint className="text-accent" size={24} />
-              </div>
-            </div>
+            
+            <div className="absolute -top-10 -left-10 bg-[#00ffff] w-40 h-40 neo-border neo-shadow rounded-full mix-blend-multiply" />
+            <div className="absolute -bottom-10 -right-10 bg-[#ff00ff] w-40 h-40 neo-border neo-shadow mix-blend-multiply" />
           </div>
         </section>
       </main>
 
-      <footer className="p-16 border-t border-black/5 bg-paper/60 backdrop-blur-3xl relative z-20">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-16">
-          <div className="flex flex-col gap-4 text-center md:text-left">
-            <span className="text-3xl font-black uppercase tracking-tighter">Zak Studio™</span>
-            <span className="text-[9px] font-black uppercase tracking-[0.6em] opacity-30 italic">Bespoke Digital Systems</span>
+      <footer className="bg-black text-white neo-border-t p-8 md:p-12">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="text-center md:text-left">
+            <span className="text-4xl font-black uppercase bg-[#ff00ff] text-black px-4 py-2 neo-border block mb-2 -rotate-1">Zak Studio™</span>
+            <span className="text-sm font-bold uppercase tracking-widest text-[#00ffff]">NEOBRUTALISM BUILD 2026</span>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-12">
-            {["Ethos", "Terms", "Archive", "Manifesto"].map((link) => (
-              <span key={link} className="text-[9px] font-black uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity cursor-pointer">
-                {link}
-              </span>
+          <div className="flex gap-4">
+            {["Instagram", "Twitter", "LinkedIn"].map((social) => (
+              <div key={social} className="bg-white text-black neo-border px-4 py-2 font-black uppercase hover:bg-[#00ffff] cursor-pointer hover:-translate-y-1 transition-transform">
+                {social}
+              </div>
             ))}
-          </div>
-
-          <div className="flex items-center gap-8 px-10 py-4 bg-primary text-paper rounded-full border border-white/5">
-            <Code size={16} className="text-accent" />
-            <span className="text-[9px] font-black uppercase tracking-[0.6em]">Build 2026.05</span>
           </div>
         </div>
       </footer>
-    </motion.div>
+    </div>
   );
 }
